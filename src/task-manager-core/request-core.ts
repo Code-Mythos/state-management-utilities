@@ -1,4 +1,4 @@
-import { CacheCore, CacheCoreConfig, TypeCacheRecord } from "./cache-core";
+import { CacheCore, CacheCoreConfig, TypeCacheRecord } from './cache-core';
 
 export class RequestCore<
   Task extends (...args: any) => Promise<any>,
@@ -139,7 +139,7 @@ export class RequestCore<
     const { onRequest, onSuccess, onCache, isInvalidate, isPreProcess } =
       config;
 
-    if (!isInvalidate && !isPreProcess)
+    if (!isInvalidate && !isPreProcess && this._config.cache?.enableCache)
       this._getCache(hash).then(async (cacheRaw) => {
         const { cache, isIgnored = false } =
           (await this._config.interceptors?.cache?.({
@@ -538,8 +538,6 @@ export type TaskManagerCoreConfig<
   TaskError = any
 > = {
   handler: Task;
-
-  initialValue?: Awaited<ReturnType<Task>>;
 
   retryOnError?: number;
   retryOnErrorDelay?: number;
