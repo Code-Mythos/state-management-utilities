@@ -7,6 +7,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./center": {
+      "import": "./dist/center.js",
+      "types": "./dist/center.d.ts"
     }
   },
   "types": "./dist/index.d.ts",
@@ -26,6 +30,7 @@
   "devDependencies": {
     "@testing-library/react": "^16.0.0",
     "@types/jest": "^29.5.12",
+    "@types/lodash.clonedeep": "^4.5.9",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.3",
     "jest": "^29.7.0",
@@ -34,6 +39,8 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "immer": "^10.1.1",
+    "lodash.clonedeep": "^4.5.0",
     "react": "^18.3.1"
   },
   "scripts": {
