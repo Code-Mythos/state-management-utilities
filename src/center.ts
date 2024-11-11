@@ -205,6 +205,7 @@ class StateManagerCenter {
           this._stateManagers[uid].value = states[uid];
       }
     } catch (error) {
+      /* istanbul ignore next */
       console.error(
         `Error occurred while applying the states in the "State Manager Center".\n`,
         error
