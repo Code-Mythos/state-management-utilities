@@ -11,11 +11,33 @@ export class StateManager<StateType> {
   protected _value: StateType;
 
   /**
+   * The current state change promise.
+   *
+   * @protected
+   * @type {Promise<any>}
+   */
+  protected _fullFill: Promise<any> | undefined;
+
+  /**
+   * Returns the promise to full fill the current state change.
+   *
+   * @returns the instance of the state manager for method chaining.
+   */
+  public async fullFill() {
+    if (this._fullFill) await this._fullFill;
+
+    return this;
+  }
+
+  /**
    * A dictionary of callbacks registered in the state manager.
    * The key is the unique identifier of the callback, and the value is the callback function.
    * The callback function receives the new state whenever it is updated.
    */
-  protected _callbacks: Record<string, (newState: StateType) => void> = {};
+  protected _callbacks: Record<
+    string,
+    (newState: StateType) => void | Promise<void>
+  > = {};
 
   /**
    * Hydrates the current state value.
@@ -82,12 +104,12 @@ export class StateManager<StateType> {
       state: newState,
     });
 
-    (async () => {
-      this._configs.onChange?.(newState);
+    this._fullFill = (async () => {
+      await this._configs.onChange?.(newState);
 
       for (const setterId in this._callbacks) {
         /* istanbul ignore next */
-        this._callbacks?.[setterId]?.(newState);
+        await this._callbacks?.[setterId]?.(newState);
       }
     })().catch(console.error);
   }
@@ -204,7 +226,11 @@ export type TypeStateManagerConfigs<StateType> = {
    * A callback that receives the new state whenever it is updated.
    * You can utilize "onChange" callback to modify other state manager instances or variables.
    * With "onChange" callback you do not need to cope with creating a unique id to register a callback with "register" method.
+   *
+   * Important Notes:
    * It will not be unregistered ever.
+   * It will be triggered even in the initialization of the state manager.
+   *
    * @param newState
    * @returns void
    */
