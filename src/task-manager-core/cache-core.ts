@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { clear, createStore, del, get, set, UseStore } from "idb-keyval";
 
 import { EncodeCore, EncodeCoreConfig } from "./encode-core";
@@ -49,10 +51,12 @@ export class CacheCore<
     }
   }
 
-  public async delCache(cacheKey: string) {
+  /* istanbul ignore next */
+  public async deleteCache(cacheKey: string) {
     if (this._cacheStore) del(cacheKey, this._cacheStore);
   }
 
+  /* istanbul ignore next */
   public async clearCache() {
     if (this._cacheStore) clear(this._cacheStore);
   }

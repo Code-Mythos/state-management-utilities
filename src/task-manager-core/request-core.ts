@@ -1,4 +1,4 @@
-import { CacheCore, CacheCoreConfig, TypeCacheRecord } from './cache-core';
+import { CacheCore, CacheCoreConfig, TypeCacheRecord } from "./cache-core";
 
 export class RequestCore<
   Task extends (...args: any) => Promise<any>,
@@ -75,17 +75,16 @@ export class RequestCore<
 
     if (this._isPrevented({ hash, config })) return this;
 
-    if (!config.isPreProcess) {
-      this._setRequestDetails(() => ({
-        parameters,
-        hash,
-        createdAt,
-        updatedAt: createdAt,
-        isRequested: true,
-        status: "requested",
-        procedure: ["requested"],
-      }));
-    }
+    // if (!config.isPreProcess)
+    this._setRequestDetails(() => ({
+      parameters,
+      hash,
+      createdAt,
+      updatedAt: createdAt,
+      isRequested: true,
+      status: "requested",
+      procedure: ["requested"],
+    }));
 
     let data: Awaited<ReturnType<Task>> | undefined | null = null;
     let error: any;
@@ -139,7 +138,7 @@ export class RequestCore<
     const { onRequest, onSuccess, onCache, isInvalidate, isPreProcess } =
       config;
 
-    if (!isInvalidate && !isPreProcess && this._config.cache?.enableCache)
+    if (this._config.cache?.enableCache)
       this._getCache(hash).then(async (cacheRaw) => {
         const { cache, isIgnored = false } =
           (await this._config.interceptors?.cache?.({
@@ -163,13 +162,15 @@ export class RequestCore<
           hash,
           parameters: parametersRaw,
         });
-        await this._config.defaultEventHandlers?.onCache?.({
-          cache,
-          isInvalidate,
-          isPreProcess,
-          hash,
-          parameters: [...parametersRaw] as Parameters<Task>,
-        });
+
+        if (!isPreProcess && !isInvalidate)
+          await this._config.defaultEventHandlers?.onCache?.({
+            cache,
+            isInvalidate,
+            isPreProcess,
+            hash,
+            parameters: [...parametersRaw] as Parameters<Task>,
+          });
 
         this._setRequestDetails((prev) => ({
           ...prev,
@@ -187,6 +188,8 @@ export class RequestCore<
         hash,
       })) ?? { parameters: parametersRaw };
 
+    if (!this._isSameRequest(hash)) return { data };
+
     if (isPrevented) {
       this._setRequestDetails((prev) => ({
         ...prev,
@@ -199,20 +202,21 @@ export class RequestCore<
       return { data, isPrevented: true };
     }
 
-    if (!this._isSameRequest(hash)) return { data };
-
     await onRequest?.({
       parameters: [...parametersRaw] as Parameters<Task>,
       hash,
       isInvalidate,
       isPreProcess,
     });
-    await this._config.defaultEventHandlers?.onRequest?.({
-      parameters: [...parametersRaw] as Parameters<Task>,
-      hash,
-      isInvalidate,
-      isPreProcess,
-    });
+    if (!isPreProcess)
+      await this._config.defaultEventHandlers?.onRequest?.({
+        parameters: [...parametersRaw] as Parameters<Task>,
+        hash,
+        isInvalidate,
+        isPreProcess,
+      });
+
+    if (!this._isSameRequest(hash)) return { data };
 
     // const isCachePreventedRequest = this._isCachePreventNewRequest(cache);
 
@@ -260,6 +264,8 @@ export class RequestCore<
 
     data = interceptedData;
 
+    if (!this._isSameRequest(hash)) return { data };
+
     await onSuccess?.({
       data,
       hash,
@@ -267,13 +273,14 @@ export class RequestCore<
       isPreProcess,
       parameters: [...parametersRaw] as Parameters<Task>,
     });
-    await this._config.defaultEventHandlers?.onSuccess?.({
-      data,
-      hash,
-      isInvalidate,
-      isPreProcess,
-      parameters: [...parametersRaw] as Parameters<Task>,
-    });
+    if (!isPreProcess)
+      await this._config.defaultEventHandlers?.onSuccess?.({
+        data,
+        hash,
+        isInvalidate,
+        isPreProcess,
+        parameters: [...parametersRaw] as Parameters<Task>,
+      });
 
     return { data };
   }
@@ -334,13 +341,14 @@ export class RequestCore<
       isInvalidate: config.isInvalidate,
       isPreProcess: config.isPreProcess,
     });
-    await this._config.defaultEventHandlers?.onError?.({
-      error,
-      hash,
-      parameters: [...parametersRaw] as Parameters<Task>,
-      isInvalidate: config.isInvalidate,
-      isPreProcess: config.isPreProcess,
-    });
+    if (!config.isPreProcess)
+      await this._config.defaultEventHandlers?.onError?.({
+        error,
+        hash,
+        parameters: [...parametersRaw] as Parameters<Task>,
+        isInvalidate: config.isInvalidate,
+        isPreProcess: config.isPreProcess,
+      });
 
     return error;
   }
@@ -380,14 +388,15 @@ export class RequestCore<
       isInvalidate: config.isInvalidate,
       isPreProcess: config.isPreProcess,
     });
-    await this._config.defaultEventHandlers?.onFinally?.({
-      data,
-      error,
-      hash,
-      parameters: [...parametersRaw] as Parameters<Task>,
-      isInvalidate: config.isInvalidate,
-      isPreProcess: config.isPreProcess,
-    });
+    if (!config.isPreProcess)
+      await this._config.defaultEventHandlers?.onFinally?.({
+        data,
+        error,
+        hash,
+        parameters: [...parametersRaw] as Parameters<Task>,
+        isInvalidate: config.isInvalidate,
+        isPreProcess: config.isPreProcess,
+      });
   }
 
   protected get _isRetryOnError(): boolean {
@@ -413,15 +422,20 @@ export type RequestConfigBase<
   TaskError = any
 > = RequestEventHandlersType<Task, TaskError> & Partial<SharedConfigs>;
 
+// export type RequestConfigs<
+//   Task extends (...args: any) => Promise<any>,
+//   TaskError = any
+// > =
+//   | ({ isInvalidate?: never } & RequestEventHandlersType<Task, TaskError>)
+//   | ({ isInvalidate?: true } & Omit<
+//       RequestEventHandlersType<Task, TaskError>,
+//       "onCache"
+//     >);
+
 export type RequestConfigs<
   Task extends (...args: any) => Promise<any>,
   TaskError = any
-> =
-  | ({ isInvalidate?: never } & RequestEventHandlersType<Task, TaskError>)
-  | ({ isInvalidate?: true } & Omit<
-      RequestEventHandlersType<Task, TaskError>,
-      "onCache"
-    >);
+> = Partial<SharedConfigs> & RequestEventHandlersType<Task, TaskError>;
 
 export type RequestEventHandlersType<
   Task extends (...args: any) => Promise<any>,

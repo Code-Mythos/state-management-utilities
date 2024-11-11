@@ -40,6 +40,9 @@ export class TaskManagerCore<
   public config(config: RequestConfigs<Task, TaskError>): {
     request: (...parameters: Parameters<Task>) => Promise<any>;
   } {
+    if (config.isInvalidate && config.isPreProcess)
+      throw new Error("isInvalidate and isPreProcess cannot be used together!");
+
     return {
       /**
        * Initiates a request with the given parameters and the configured settings.
