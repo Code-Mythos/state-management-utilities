@@ -11,6 +11,10 @@
     "./center": {
       "import": "./dist/center.js",
       "types": "./dist/center.d.ts"
+    },
+    "./task-manager-core": {
+      "import": "./dist/task-manager-core/index.js",
+      "types": "./dist/task-manager-core/index.d.ts"
     }
   },
   "types": "./dist/index.d.ts",
