@@ -5,7 +5,6 @@ import { center } from "./center";
 
 /**
  * This class provides methods to register, un-register, update, and retrieve state, ensuring components are updated efficiently and consistently.
- * However, if you are utilizing React.JS, you can use "useRegisterStates" to automate the states registration, un-registration and component updates.
  */
 export class StateManager<StateType> {
   protected _value: StateType;
