@@ -4,7 +4,7 @@
   "description": "State management utilities",
   "main": "./dist/index.js",
   "repository": {
-    "url": "https://github.com/Code-Mythos/state-management-utilities"
+    "url": "git+https://github.com/Code-Mythos/state-management-utilities.git"
   },
   "exports": {
     ".": {
