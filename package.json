@@ -3,6 +3,9 @@
   "version": "0.9.0",
   "description": "State management utilities",
   "main": "./dist/index.js",
+  "repository": {
+    "url": "https://github.com/Code-Mythos/state-management-utilities"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
