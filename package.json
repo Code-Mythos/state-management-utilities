@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.1",
+  "version": "0.9.11",
   "description": "State management utilities",
   "main": "./dist/index.js",
   "repository": {
@@ -20,6 +20,9 @@
       "types": "./dist/task-manager-core/index.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "types": "./dist/index.d.ts",
   "keywords": [
     "state",
@@ -54,6 +57,7 @@
     "react": "^18.3.1"
   },
   "scripts": {
+    "prepare": "tsc -p tsconfig.build.json --declaration",
     "build": "npx tsc -p tsconfig.build.json --declaration",
     "test": "jest",
     "test:coverage": "jest --coverage"
