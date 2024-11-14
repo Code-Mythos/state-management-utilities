@@ -1,10 +1,13 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.11",
+  "version": "0.9.29",
   "description": "State management utilities",
+  "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "repository": {
-    "url": "git+https://github.com/Code-Mythos/state-management-utilities.git"
+    "type": "git",
+    "url": "https://github.com/Code-Mythos/state-management-utilities.git"
   },
   "exports": {
     ".": {
@@ -15,13 +18,13 @@
       "import": "./dist/center.js",
       "types": "./dist/center.d.ts"
     },
-    "./task-manager-core": {
-      "import": "./dist/task-manager-core/index.js",
-      "types": "./dist/task-manager-core/index.d.ts"
+    "./state-manager": {
+      "import": "./dist/state-manager.js",
+      "types": "./dist/state-manager.d.ts"
     }
   },
   "files": [
-    "dist"
+    "dist/"
   ],
   "types": "./dist/index.d.ts",
   "keywords": [
