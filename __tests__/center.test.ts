@@ -1,5 +1,4 @@
-import { center, CenterRecordType } from "../src/center";
-import { StateManager } from "../src/index";
+import { center, StateManager } from "../src";
 
 describe("StateManagerCenter", () => {
   beforeEach(() => {

@@ -1,8 +1,7 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.29",
+  "version": "0.9.35",
   "description": "State management utilities",
-  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "repository": {
@@ -11,16 +10,28 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./center": {
-      "import": "./dist/center.js",
+      "default": "./dist/center.js",
       "types": "./dist/center.d.ts"
     },
-    "./state-manager": {
-      "import": "./dist/state-manager.js",
-      "types": "./dist/state-manager.d.ts"
+    "./state": {
+      "default": "./dist/state.js",
+      "types": "./dist/state.d.ts"
+    },
+    "./task": {
+      "default": "./dist/task.js",
+      "types": "./dist/task.d.ts"
+    },
+    "./store": {
+      "default": "./dist/store.js",
+      "types": "./dist/store.d.ts"
+    },
+    "./computed": {
+      "default": "./dist/computed.js",
+      "types": "./dist/computed.d.ts"
     }
   },
   "files": [
@@ -57,7 +68,8 @@
     "idb-keyval": "^6.2.1",
     "immer": "^10.1.1",
     "lodash.clonedeep": "^4.5.0",
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "task-manager-core": "^0.9.3"
   },
   "scripts": {
     "prepare": "tsc -p tsconfig.build.json --declaration",
