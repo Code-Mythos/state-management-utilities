@@ -1,4 +1,4 @@
-import { StateManager } from '../src';
+import { StateManager } from "../src/state";
 
 describe("State Manager: ", () => {
   describe("The trigger method: ", () => {

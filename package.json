@@ -35,7 +35,8 @@
     }
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src"
   ],
   "types": "./dist/index.d.ts",
   "keywords": [
@@ -74,7 +75,7 @@
   "scripts": {
     "prepare": "tsc -p tsconfig.build.json --declaration",
     "build": "npx tsc -p tsconfig.build.json --declaration",
-    "test": "jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "test:coverage": "jest --coverage"
   }
 }

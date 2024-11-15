@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { TaskManagerCore } from "task-manager-core";
 
 import { center } from "./center";

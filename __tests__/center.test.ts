@@ -1,4 +1,5 @@
-import { center, StateManager } from "../src";
+import { center } from "../src/center";
+import { StateManager } from "../src/state";
 
 describe("StateManagerCenter", () => {
   beforeEach(() => {
