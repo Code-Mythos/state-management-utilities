@@ -1,4 +1,6 @@
-import { StateManager, TypeStateManagerConfigs } from "./index";
+import type { TypeStateManagerConfigs } from "./state";
+
+import { StateManager } from "./state";
 
 export class StateManagerStore<
   DataType extends Record<string, any>,

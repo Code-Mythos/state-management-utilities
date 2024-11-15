@@ -1,6 +1,6 @@
-import type { StateManager } from "./index";
+import type { StateManager } from "./state";
 
-import { produce } from "immer";
+import { produce } from 'immer';
 
 /**
  * The `StateManagerCenter` class is a singleton that manages multiple state managers,

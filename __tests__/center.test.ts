@@ -114,4 +114,87 @@ describe("StateManagerCenter", () => {
     center.clearRecords();
     expect(center.records.length).toBe(0);
   });
+
+  test("should initialize hydration and return hydrated states", async () => {
+    const entity1 = Promise.resolve({ hydrated: { key1: "value1" } });
+    const entity2 = Promise.resolve({ hydrated: { key2: "value2" } });
+    const hydratedStates = await center.hydrate(entity1, entity2);
+
+    expect(center.isHydration).toBe(true);
+    expect(hydratedStates).toEqual({ key1: "value1", key2: "value2" });
+  });
+
+  test("should ignore non-object pointers", async () => {
+    const entity1 = Promise.resolve("string");
+    const entity2 = Promise.resolve(123);
+    const hydratedStates = await center.hydrate(entity1, entity2);
+
+    expect(center.isHydration).toBe(true);
+    expect(hydratedStates).toEqual({});
+  });
+
+  test("should ignore pointers without hydrated property", async () => {
+    const entity1 = Promise.resolve({ notHydrated: { key1: "value1" } });
+    const hydratedStates = await center.hydrate(entity1);
+
+    expect(center.isHydration).toBe(true);
+    expect(hydratedStates).toEqual({});
+  });
+
+  test("should ignore non-object hydrated property", async () => {
+    const entity1 = Promise.resolve({ hydrated: "string" });
+    const hydratedStates = await center.hydrate(entity1);
+
+    expect(center.isHydration).toBe(true);
+    expect(hydratedStates).toEqual({});
+  });
+
+  test("should not log state if logging is disabled", () => {
+    center.enableLog = false;
+    const uid = Date.now().toString();
+    const state = "TEST";
+    center._log({ uid, state });
+    expect(center.currentStates[uid]).toBeUndefined();
+  });
+
+  test("should log state if logging is enabled", async () => {
+    center.enableLog = true;
+    const uid = Date.now().toString();
+    const state = "TEST";
+    center._log({ uid, state });
+    expect(center.currentStates[uid]).toBe(state);
+    const records = await center.getReverseRecords();
+    expect(records[0].states[uid]).toBe(state);
+  });
+
+  test("should update records with new state", async () => {
+    center.enableLog = true;
+    const uid = Date.now().toString();
+    const state = "TEST";
+    center._log({ uid, state });
+    const records = await center.getReverseRecords();
+    expect(records[0].updatedUID).toBe(uid);
+    expect(records[0].states[uid]).toBe(state);
+  });
+
+  test("should call onLog callback if registered", async () => {
+    const mockCallback = jest.fn().mockResolvedValue(undefined);
+    center.onLog(undefined);
+    center.onLog(mockCallback);
+    const uid = Date.now().toString();
+    const state = "TEST";
+    center._log({ uid, state });
+    expect(mockCallback).toHaveBeenCalled();
+  });
+
+  test("should handle errors in onLog callback", async () => {
+    const mockCallback = jest.fn().mockRejectedValue(new Error("Test Error"));
+    center.onLog(undefined);
+    center.onLog(mockCallback);
+    const uid = Date.now().toString();
+    const state = "TEST";
+    center._log({ uid, state });
+    await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for async callback
+    expect(mockCallback).toHaveBeenCalled();
+  });
 });

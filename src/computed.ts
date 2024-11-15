@@ -1,4 +1,6 @@
-import { StateManager, TypeStateManagerConfigs } from "./index";
+import type { TypeStateManagerConfigs } from "./state";
+
+import { StateManager } from "./state";
 
 export class Computed<DataType> extends StateManager<DataType> {
   public override get value() {

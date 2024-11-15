@@ -3,7 +3,9 @@
 import { TaskManagerCore } from "task-manager-core";
 
 import { center } from "./center";
-import { StateManager, TypeStateManagerConfigs } from "./index";
+import { StateManager } from "./state";
+
+import type { TypeStateManagerConfigs } from "./state";
 
 import type {
   RequestConfigBase,

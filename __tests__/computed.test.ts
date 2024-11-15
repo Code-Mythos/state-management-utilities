@@ -18,12 +18,15 @@ describe("Computed", () => {
     expect(computed.value).toBe(3);
   });
 
-  test("should update value when triggers change", () => {
+  test("should update value when triggers change", async () => {
     const computed = new Computed(
       () => stateManager1.value + stateManager2.value,
       [stateManager1, stateManager2]
     );
     stateManager1.value = 3;
+
+    await stateManager1.fullFill();
+
     expect(computed.value).toBe(5);
   });
 
