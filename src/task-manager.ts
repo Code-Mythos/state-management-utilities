@@ -208,3 +208,14 @@ export type TaskManagerConfig<
   isProcessingConfig?: StateManagerConfigs<boolean>;
   requestParamsConfig?: StateManagerConfigs<RequestDataRecordType<Task>>;
 } & TaskManagerCoreConfig<Task, TaskError>;
+
+export type {
+  RequestConfigBase,
+  RequestConfigs,
+  RequestDataRecordType,
+  RequestEventHandlersType,
+  RequestStatus,
+  SharedConfigs,
+  TaskManagerCoreConfig,
+  TaskManagerInterceptorsType,
+} from "task-manager-core";

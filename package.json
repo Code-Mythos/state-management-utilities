@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.37",
+  "version": "0.9.38",
   "description": "State management utilities",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
