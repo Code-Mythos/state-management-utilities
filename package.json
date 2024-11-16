@@ -61,8 +61,14 @@
       }
     },
     "./computed": {
-      "default": "./dist/computed.js",
-      "types": "./dist/computed.d.ts"
+      "import": {
+        "default": "./dist/computed.mjs",
+        "types": "./dist/computed.d.mts"
+      },
+      "require": {
+        "default": "./dist/computed.js",
+        "types": "./dist/computed.d.ts"
+      }
     }
   },
   "files": [
