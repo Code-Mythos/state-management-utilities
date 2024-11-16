@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.38",
+  "version": "0.9.41",
   "description": "State management utilities",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -30,7 +30,27 @@
         "default": "./dist/center.js"
       }
     },
+    "./dist/center": {
+      "import": {
+        "types": "./dist/center.d.mts",
+        "default": "./dist/center.mjs"
+      },
+      "require": {
+        "types": "./dist/center.d.ts",
+        "default": "./dist/center.js"
+      }
+    },
     "./state-manager": {
+      "import": {
+        "types": "./dist/state-manager.d.mts",
+        "default": "./dist/state-manager.mjs"
+      },
+      "require": {
+        "types": "./dist/state-manager.d.ts",
+        "default": "./dist/state-manager.js"
+      }
+    },
+    "./dist/state-manager": {
       "import": {
         "types": "./dist/state-manager.d.mts",
         "default": "./dist/state-manager.mjs"
@@ -50,6 +70,16 @@
         "default": "./dist/task-manager.js"
       }
     },
+    "./dist/task-manager": {
+      "import": {
+        "types": "./dist/task-manager.d.mts",
+        "default": "./dist/task-manager.mjs"
+      },
+      "require": {
+        "types": "./dist/task-manager.d.ts",
+        "default": "./dist/task-manager.js"
+      }
+    },
     "./store": {
       "import": {
         "types": "./dist/store.d.mts",
@@ -60,7 +90,27 @@
         "default": "./dist/store.js"
       }
     },
+    "./dist/store": {
+      "import": {
+        "types": "./dist/store.d.mts",
+        "default": "./dist/store.mjs"
+      },
+      "require": {
+        "types": "./dist/store.d.ts",
+        "default": "./dist/store.js"
+      }
+    },
     "./computed": {
+      "import": {
+        "types": "./dist/computed.d.mts",
+        "default": "./dist/computed.mjs"
+      },
+      "require": {
+        "types": "./dist/computed.d.ts",
+        "default": "./dist/computed.js"
+      }
+    },
+    "./dist/computed": {
       "import": {
         "types": "./dist/computed.d.mts",
         "default": "./dist/computed.mjs"
@@ -101,7 +151,7 @@
   "dependencies": {
     "immer": "^10.1.1",
     "lodash.clonedeep": "^4.5.0",
-    "task-manager-core": "^0.9.5"
+    "task-manager-core": "^0.9.8"
   },
   "scripts": {
     "prepare": "npm run build",
