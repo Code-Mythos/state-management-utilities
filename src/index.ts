@@ -1,5 +1,5 @@
-export * from "./state";
+export * from "./state-manager";
 export * from "./center";
 export * from "./computed";
 export * from "./store";
-export * from "./task";
+export * from "./task-manager";

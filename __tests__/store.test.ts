@@ -1,4 +1,5 @@
-import { StateManagerStore, StateManagerStoreConfigs } from "../src/store";
+import { StateManager } from "../src/state-manager";
+import { StateManagerStore } from "../src/store";
 
 describe("StateManagerStore", () => {
   type TestDataType = {
@@ -6,16 +7,40 @@ describe("StateManagerStore", () => {
     b: string;
   };
 
+  const isChanged = {
+    a: false,
+    b: false,
+  };
   let uid: string;
   let initialValues: TestDataType;
   let store: StateManagerStore<TestDataType, any>;
 
   beforeEach(() => {
+    isChanged.a = false;
+    isChanged.b = false;
+
     initialValues = { a: 1, b: "test" };
 
     uid = Date.now().toString();
 
-    store = new StateManagerStore(initialValues, uid);
+    store = new StateManagerStore<
+      { a: number; b: string },
+      {
+        a: StateManager<number>;
+        b: StateManager<string>;
+      }
+    >(initialValues, uid, {
+      a: {
+        onChange() {
+          isChanged.a = true;
+        },
+      },
+      b: {
+        onChange() {
+          isChanged.b = true;
+        },
+      },
+    });
   });
 
   it("should initialize entities correctly", () => {
@@ -43,12 +68,13 @@ describe("StateManagerStore", () => {
   });
 
   it("should fulfill entities correctly", async () => {
-    store.value = { a: 2, b: "changed" };
+    const newValue = { a: 2, b: "changed" };
+    store.value = newValue;
 
     await store.fulfill();
 
-    expect(store.entities.a.value).toBe(initialValues.a);
-    expect(store.entities.b.value).toBe(initialValues.b);
+    expect(store.entities.a.value).toBe(newValue.a);
+    expect(store.entities.b.value).toBe(newValue.b);
   });
 
   it("should get hydrated values correctly", () => {

@@ -1,6 +1,6 @@
-import type { TypeStateManagerConfigs } from "./state";
+import type { TypeStateManagerConfigs } from "./state-manager";
 
-import { StateManager } from "./state";
+import { StateManager } from "./state-manager";
 
 export class StateManagerStore<
   DataType extends Record<string, any>,
@@ -63,9 +63,9 @@ export class StateManagerStore<
   }
 
   public async fulfill() {
-    return await Promise.all(
-      this._KEYS.map((key) => this.entities[key].fulfill())
-    );
+    await Promise.all(this._KEYS.map((key) => this.entities[key].fulfill()));
+
+    return this;
   }
 
   public get hydrated() {

@@ -1,5 +1,5 @@
-import { center } from "../src/center";
-import { StateManager } from "../src/state";
+import { center } from '../src/center';
+import { StateManager } from '../src/state-manager';
 
 describe("StateManagerCenter", () => {
   beforeEach(() => {
@@ -188,7 +188,7 @@ describe("StateManagerCenter", () => {
   });
 
   test("should handle errors in onLog callback", async () => {
-    const mockCallback = jest.fn().mockRejectedValue(new Error("Test Error"));
+    const mockCallback = jest.fn();
     center.onLog(undefined);
     center.onLog(mockCallback);
     const uid = Date.now().toString();

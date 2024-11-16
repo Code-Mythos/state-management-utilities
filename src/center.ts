@@ -1,6 +1,6 @@
-import type { StateManager } from "./state";
+import type { StateManager } from "./state-manager";
 
-import { produce } from 'immer';
+import { produce } from "immer";
 
 /**
  * The `StateManagerCenter` class is a singleton that manages multiple state managers,
@@ -166,7 +166,7 @@ class StateManagerCenter {
         });
       });
 
-      this._onLog?.({ uid, state }).catch(console.error);
+      this._onLog?.({ uid, state })?.catch(console.error);
     })().catch(console.error);
 
     return this;

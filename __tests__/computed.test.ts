@@ -1,5 +1,5 @@
 import { Computed } from "../src/computed";
-import { StateManager } from "../src/state";
+import { StateManager } from "../src/state-manager";
 
 describe("Computed", () => {
   let stateManager1: StateManager<number>;
