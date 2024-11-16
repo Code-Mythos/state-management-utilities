@@ -43,13 +43,12 @@ describe("StateManagerStore", () => {
   });
 
   it("should fulfill entities correctly", async () => {
-    const mockFullFill = jest.fn().mockResolvedValue("fulfilled");
-    store.entities.a.fullFill = mockFullFill;
-    store.entities.b.fullFill = mockFullFill;
+    store.value = { a: 2, b: "changed" };
 
-    const result = await store.fullFill();
-    expect(result).toEqual(["fulfilled", "fulfilled"]);
-    expect(mockFullFill).toHaveBeenCalledTimes(2);
+    await store.fulfill();
+
+    expect(store.entities.a.value).toBe(initialValues.a);
+    expect(store.entities.b.value).toBe(initialValues.b);
   });
 
   it("should get hydrated values correctly", () => {

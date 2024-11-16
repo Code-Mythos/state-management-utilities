@@ -25,7 +25,7 @@ describe("Computed", () => {
     );
     stateManager1.value = 3;
 
-    await stateManager1.fullFill();
+    await stateManager1.fulfill();
 
     expect(computed.value).toBe(5);
   });

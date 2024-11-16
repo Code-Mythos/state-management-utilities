@@ -62,9 +62,9 @@ export class StateManagerStore<
     }
   }
 
-  public async fullFill() {
+  public async fulfill() {
     return await Promise.all(
-      this._KEYS.map((key) => this.entities[key].fullFill())
+      this._KEYS.map((key) => this.entities[key].fulfill())
     );
   }
 

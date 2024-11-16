@@ -20,7 +20,7 @@ This project provides state management utilities to efficiently and consistently
     - [register](#register)
     - [unregister](#unregister)
     - [reset](#reset)
-    - [fullFill](#fullfill)
+    - [fulfill](#fullfill)
     - [trigger](#trigger)
     - [hydrated](#hydrated)
     - [uid](#uid)
@@ -162,12 +162,12 @@ Resets the state manager to its initial state.
 public reset(): this;
 ```
 
-#### fullFill
+#### fulfill
 
 Returns the promise to fulfill the current state change.
 
 ```typescript
-public async fullFill(): Promise<this>;
+public async fulfill(): Promise<this>;
 ```
 
 #### trigger

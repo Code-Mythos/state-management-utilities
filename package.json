@@ -3,31 +3,62 @@
   "version": "0.9.35",
   "description": "State management utilities",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Code-Mythos/state-management-utilities.git"
   },
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": {
+        "default": "./dist/index.mjs",
+        "types": "./dist/index.d.mts"
+      },
+      "require": {
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      }
     },
     "./center": {
-      "default": "./dist/center.js",
-      "types": "./dist/center.d.ts"
+      "import": {
+        "default": "./dist/center.mjs",
+        "types": "./dist/center.d.mts"
+      },
+      "require": {
+        "default": "./dist/center.js",
+        "types": "./dist/center.d.ts"
+      }
     },
     "./state": {
-      "default": "./dist/state.js",
-      "types": "./dist/state.d.ts"
+      "import": {
+        "default": "./dist/state.mjs",
+        "types": "./dist/state.d.mts"
+      },
+      "require": {
+        "default": "./dist/state.js",
+        "types": "./dist/state.d.ts"
+      }
     },
     "./task": {
-      "default": "./dist/task.js",
-      "types": "./dist/task.d.ts"
+      "import": {
+        "default": "./dist/task.mjs",
+        "types": "./dist/task.d.mts"
+      },
+      "require": {
+        "default": "./dist/task.js",
+        "types": "./dist/task.d.ts"
+      }
     },
     "./store": {
-      "default": "./dist/store.js",
-      "types": "./dist/store.d.ts"
+      "import": {
+        "default": "./dist/store.mjs",
+        "types": "./dist/store.d.mts"
+      },
+      "require": {
+        "default": "./dist/store.js",
+        "types": "./dist/store.d.ts"
+      }
     },
     "./computed": {
       "default": "./dist/computed.js",
@@ -35,10 +66,8 @@
     }
   },
   "files": [
-    "dist/",
-    "src"
+    "dist/"
   ],
-  "types": "./dist/index.d.ts",
   "keywords": [
     "state",
     "management",
@@ -62,6 +91,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.2.3",
+    "tsup": "^8.3.5",
     "typescript": "^5.5.4"
   },
   "dependencies": {
@@ -73,8 +103,8 @@
     "task-manager-core": "^0.9.3"
   },
   "scripts": {
-    "prepare": "tsc -p tsconfig.build.json --declaration",
-    "build": "npx tsc -p tsconfig.build.json --declaration",
+    "prepare": "npm run build",
+    "build": "tsup",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "test:coverage": "jest --coverage"
   }

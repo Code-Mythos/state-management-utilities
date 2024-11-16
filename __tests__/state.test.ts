@@ -19,7 +19,7 @@ describe("State Manager: ", () => {
 
       stateManager.trigger();
 
-      await stateManager.fullFill();
+      await stateManager.fulfill();
 
       expect(counter).toBe(2);
     });
@@ -135,7 +135,7 @@ describe("State Manager: ", () => {
 
       stateManager.value = newState;
 
-      await stateManager.fullFill();
+      await stateManager.fulfill();
 
       expect(counter).toBe(2);
     });

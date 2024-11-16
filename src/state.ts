@@ -15,15 +15,15 @@ export class StateManager<StateType> {
    * @protected
    * @type {Promise<any>}
    */
-  protected _fullFill: Promise<any> | undefined;
+  protected _fulfill: Promise<any> | undefined;
 
   /**
    * Returns the promise to full fill the current state change.
    *
    * @returns the instance of the state manager for method chaining.
    */
-  public async fullFill() {
-    if (this._fullFill) await this._fullFill;
+  public async fulfill() {
+    if (this._fulfill) await this._fulfill;
 
     return this;
   }
@@ -103,7 +103,7 @@ export class StateManager<StateType> {
       state: newState,
     });
 
-    this._fullFill = (async () => {
+    this._fulfill = (async () => {
       await this._configs.onChange?.(newState);
 
       for (const setterId in this._callbacks) {
