@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.36",
+  "version": "0.9.37",
   "description": "State management utilities",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -12,62 +12,62 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./dist/index.mjs",
-        "types": "./dist/index.d.mts"
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
       "require": {
-        "default": "./dist/index.js",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     },
     "./center": {
       "import": {
-        "default": "./dist/center.mjs",
-        "types": "./dist/center.d.mts"
+        "types": "./dist/center.d.mts",
+        "default": "./dist/center.mjs"
       },
       "require": {
-        "default": "./dist/center.js",
-        "types": "./dist/center.d.ts"
+        "types": "./dist/center.d.ts",
+        "default": "./dist/center.js"
       }
     },
     "./state-manager": {
       "import": {
-        "default": "./dist/state-manager.mjs",
-        "types": "./dist/state-manager.d.mts"
+        "types": "./dist/state-manager.d.mts",
+        "default": "./dist/state-manager.mjs"
       },
       "require": {
-        "default": "./dist/state-manager.js",
-        "types": "./dist/state-manager.d.ts"
+        "types": "./dist/state-manager.d.ts",
+        "default": "./dist/state-manager.js"
       }
     },
     "./task-manager": {
       "import": {
-        "default": "./dist/task-manager.mjs",
-        "types": "./dist/task-manager.d.mts"
+        "types": "./dist/task-manager.d.mts",
+        "default": "./dist/task-manager.mjs"
       },
       "require": {
-        "default": "./dist/task-manager.js",
-        "types": "./dist/task-manager.d.ts"
+        "types": "./dist/task-manager.d.ts",
+        "default": "./dist/task-manager.js"
       }
     },
     "./store": {
       "import": {
-        "default": "./dist/store.mjs",
-        "types": "./dist/store.d.mts"
+        "types": "./dist/store.d.mts",
+        "default": "./dist/store.mjs"
       },
       "require": {
-        "default": "./dist/store.js",
-        "types": "./dist/store.d.ts"
+        "types": "./dist/store.d.ts",
+        "default": "./dist/store.js"
       }
     },
     "./computed": {
       "import": {
-        "default": "./dist/computed.mjs",
-        "types": "./dist/computed.d.mts"
+        "types": "./dist/computed.d.mts",
+        "default": "./dist/computed.mjs"
       },
       "require": {
-        "default": "./dist/computed.js",
-        "types": "./dist/computed.d.ts"
+        "types": "./dist/computed.d.ts",
+        "default": "./dist/computed.js"
       }
     }
   },
