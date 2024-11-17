@@ -240,5 +240,3 @@ export type TypeStateManagerConfigs<StateType> = {
    */
   disableCloning?: boolean;
 };
-
-export function manager() {}

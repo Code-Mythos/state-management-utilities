@@ -1,8 +1,7 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.41",
+  "version": "0.9.51",
   "description": "State management utilities",
-  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "repository": {
@@ -14,115 +13,103 @@
       "import": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
       }
     },
     "./center": {
       "import": {
         "types": "./dist/center.d.mts",
         "default": "./dist/center.mjs"
-      },
-      "require": {
-        "types": "./dist/center.d.ts",
-        "default": "./dist/center.js"
-      }
-    },
-    "./dist/center": {
-      "import": {
-        "types": "./dist/center.d.mts",
-        "default": "./dist/center.mjs"
-      },
-      "require": {
-        "types": "./dist/center.d.ts",
-        "default": "./dist/center.js"
       }
     },
     "./state-manager": {
       "import": {
         "types": "./dist/state-manager.d.mts",
         "default": "./dist/state-manager.mjs"
-      },
-      "require": {
-        "types": "./dist/state-manager.d.ts",
-        "default": "./dist/state-manager.js"
-      }
-    },
-    "./dist/state-manager": {
-      "import": {
-        "types": "./dist/state-manager.d.mts",
-        "default": "./dist/state-manager.mjs"
-      },
-      "require": {
-        "types": "./dist/state-manager.d.ts",
-        "default": "./dist/state-manager.js"
       }
     },
     "./task-manager": {
       "import": {
         "types": "./dist/task-manager.d.mts",
         "default": "./dist/task-manager.mjs"
-      },
-      "require": {
-        "types": "./dist/task-manager.d.ts",
-        "default": "./dist/task-manager.js"
-      }
-    },
-    "./dist/task-manager": {
-      "import": {
-        "types": "./dist/task-manager.d.mts",
-        "default": "./dist/task-manager.mjs"
-      },
-      "require": {
-        "types": "./dist/task-manager.d.ts",
-        "default": "./dist/task-manager.js"
       }
     },
     "./store": {
       "import": {
         "types": "./dist/store.d.mts",
         "default": "./dist/store.mjs"
-      },
-      "require": {
-        "types": "./dist/store.d.ts",
-        "default": "./dist/store.js"
-      }
-    },
-    "./dist/store": {
-      "import": {
-        "types": "./dist/store.d.mts",
-        "default": "./dist/store.mjs"
-      },
-      "require": {
-        "types": "./dist/store.d.ts",
-        "default": "./dist/store.js"
       }
     },
     "./computed": {
       "import": {
         "types": "./dist/computed.d.mts",
         "default": "./dist/computed.mjs"
-      },
-      "require": {
-        "types": "./dist/computed.d.ts",
-        "default": "./dist/computed.js"
       }
     },
-    "./dist/computed": {
+    "./RSMDT.module.css": "./RSMDT.module.css",
+    "./react": {
       "import": {
-        "types": "./dist/computed.d.mts",
-        "default": "./dist/computed.mjs"
-      },
-      "require": {
-        "types": "./dist/computed.d.ts",
-        "default": "./dist/computed.js"
+        "types": "./dist/react/index.d.mts",
+        "default": "./dist/react/index.mjs"
+      }
+    },
+    "./react/center": {
+      "import": {
+        "types": "./dist/react/center.d.mts",
+        "default": "./dist/react/center.mjs"
+      }
+    },
+    "./react/state-manager": {
+      "import": {
+        "types": "./dist/react/state-manager.d.mts",
+        "default": "./dist/react/state-manager.mjs"
+      }
+    },
+    "./react/task-manager": {
+      "import": {
+        "types": "./dist/react/task-manager.d.mts",
+        "default": "./dist/react/task-manager.mjs"
+      }
+    },
+    "./react/store": {
+      "import": {
+        "types": "./dist/react/store.d.mts",
+        "default": "./dist/react/store.mjs"
+      }
+    },
+    "./react/computed": {
+      "import": {
+        "types": "./dist/react/computed.d.mts",
+        "default": "./dist/react/computed.mjs"
+      }
+    },
+    "./react/dev-tool": {
+      "import": {
+        "types": "./dist/react/dev-tool.d.ts",
+        "default": "./dist/react/dev-tool/index.jsx"
+      }
+    },
+    "./react/dehydrate": {
+      "import": {
+        "types": "./dist/react/dehydrate.d.ts",
+        "default": "./dist/react/dehydrate.jsx"
+      }
+    },
+    "./react/form": {
+      "import": {
+        "types": "./dist/react/form.d.mts",
+        "default": "./dist/react/form.mjs"
+      }
+    },
+    "./react/useDisableLog": {
+      "import": {
+        "types": "./dist/react/useDisableLog.d.mts",
+        "default": "./dist/react/useDisableLog.mjs"
       }
     }
   },
   "files": [
-    "dist/"
+    "dist/",
+    "RSMDT.module.css"
   ],
   "keywords": [
     "state",
@@ -141,7 +128,10 @@
     "@testing-library/react": "^16.0.0",
     "@types/jest": "^29.5.12",
     "@types/lodash.clonedeep": "^4.5.9",
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/lodash.throttle": "^4.1.9",
     "@types/node": "^22.0.0",
+    "@types/react-window": "^1.8.8",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.2.3",
@@ -149,13 +139,20 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "immer": "^10.1.1",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
+    "react": "^18.3.1",
+    "react-spinners": "^0.14.1",
+    "react-window": "^1.8.10",
     "task-manager-core": "^0.9.8"
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsup",
+    "prebuild": "tsup",
+    "build": "npx tsc -p tsconfig.build.json --declaration",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "test:coverage": "jest --coverage"
   }

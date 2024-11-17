@@ -1,0 +1,404 @@
+import React from "react";
+
+import { TypeStateManagerConfigs } from "../state-manager";
+import { StateManagerStoreConfigs } from "../store";
+import { ReactStateManagerStore } from "./store";
+
+export class ReactStateManagerForm<
+  DataType extends Record<string, any>,
+  ErrorType = string[] | undefined | null
+> {
+  protected readonly _KEYS: (keyof Required<DataType>)[];
+
+  public get KEYS() {
+    return [...this._KEYS];
+  }
+
+  public get hooks() {
+    return this._hooks;
+  }
+
+  protected readonly _truthyValues: {
+    [Key in keyof Required<DataType>]: true;
+  };
+
+  protected readonly _data: ReactStateManagerStore<DataType>;
+
+  public get data() {
+    return this._data.entities;
+  }
+
+  protected readonly _errors: ReactStateManagerStore<{
+    [Key in keyof DataType]?: ErrorType;
+  }>;
+
+  public get errors() {
+    return this._errors.entities;
+  }
+
+  protected readonly _touched: ReactStateManagerStore<{
+    [Key in keyof DataType]?: boolean;
+  }>;
+
+  public get touched() {
+    return this._touched.entities;
+  }
+
+  protected readonly _modified: ReactStateManagerStore<{
+    [Key in keyof DataType]?: boolean;
+  }>;
+
+  public get modified() {
+    return this._modified.entities;
+  }
+
+  public get value() {
+    return {
+      data: this._data.value,
+      errors: this._errors.value,
+      touched: this._touched.value,
+      modified: this._modified.value,
+    };
+  }
+
+  public set value(newValues: {
+    data?: DataType;
+    errors?: { [Key in keyof DataType]?: ErrorType };
+    touched?: { [Key in keyof DataType]?: boolean };
+    modified?: { [Key in keyof DataType]?: boolean };
+  }) {
+    if (newValues.data) {
+      this._data.value = newValues.data;
+    }
+
+    if (newValues.errors) {
+      this._errors.value = newValues.errors;
+    }
+
+    if (newValues.touched) {
+      this._touched.value = newValues.touched;
+    }
+
+    if (newValues.modified) {
+      this._modified.value = newValues.modified;
+    }
+  }
+
+  protected readonly _validators:
+    | {
+        [Key in keyof Required<DataType>]: (value: any) => void;
+      }
+    | undefined;
+
+  protected readonly _hooks = Object.freeze({
+    useField: <Key extends keyof DataType>(name: Key) => {
+      const [touched, setTouched] =
+        this._touched.entities[name].hooks.useState();
+      const [value, _setValue] = this._data.entities[name].hooks.useState();
+      const [error, setError] = this._errors.entities[name].hooks.useState();
+      const [modified, setModified] =
+        this._modified.entities[name].hooks.useState();
+
+      const setValue = React.useCallback(
+        (newValue: DataType[Key]) => {
+          // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
+          this._errors.entities[name].value = undefined;
+
+          this._data.entities[name].value = newValue;
+          this._modified.entities[name].value = true;
+          this._touched.entities[name].value = true;
+        },
+        [name]
+      );
+
+      const setAsTouched = React.useCallback(() => {
+        this._touched.entities[name].value = true;
+      }, [name]);
+
+      const setAsModified = React.useCallback(() => {
+        this._modified.entities[name].value = true;
+      }, [name]);
+
+      return {
+        value,
+        setValue,
+        error,
+        setError,
+        touched,
+        setTouched,
+        modified,
+        setModified,
+
+        setAsTouched,
+        setAsModified,
+
+        _setValue,
+      };
+    },
+
+    useData: () => {
+      return this._data.hooks.useState();
+    },
+
+    useErrors: () => {
+      return this._errors.hooks.useState();
+    },
+
+    useTouched: () => {
+      return this._touched.hooks.useState();
+    },
+
+    useModified: () => {
+      return this._modified.hooks.useState();
+    },
+
+    useForm: () => {
+      const [data, setData] = this._data.hooks.useState();
+      const [errors, setErrors] = this._errors.hooks.useState();
+      const [touched, setTouched] = this._touched.hooks.useState();
+      const [modified, setModified] = this._modified.hooks.useState();
+
+      return {
+        data,
+        setData,
+        errors,
+        setErrors,
+        touched,
+        setTouched,
+        modified,
+        setModified,
+      };
+    },
+
+    useIsModified: () => {
+      const [modified] = this._modified.hooks.useState();
+
+      const isModified = React.useMemo(
+        () => Object.values(modified).some((value) => !!value),
+        [modified]
+      );
+
+      return [isModified] as [isModified: boolean];
+    },
+
+    useIsTouched: () => {
+      const [touched] = this._touched.hooks.useState();
+
+      const isTouched = React.useMemo(
+        () => Object.values(touched).some((value) => !!value),
+        [touched]
+      );
+
+      return [isTouched] as [isTouched: boolean];
+    },
+
+    useHasErrors: () => {
+      if (!this._config.hasError)
+        throw new Error("hasError selector is not defined in the config");
+
+      const [errors] = this._errors.hooks.useState();
+
+      const hasErrors = React.useMemo(
+        () => Object.values(errors).some(this._config.hasError!),
+        [errors]
+      );
+
+      return [hasErrors] as [hasErrors: boolean];
+    },
+  });
+
+  constructor(
+    initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
+    protected _config: ReactStateManagerFormConfig<DataType, ErrorType> = {
+      uid: `RSMF-#${++counter}`,
+    }
+  ) {
+    this._KEYS = Object.keys(initialValues);
+
+    if (this._config.getValidator) {
+      this._validators = this._KEYS.reduce(
+        (acc, key) => {
+          acc[key] = this._config.getValidator!(key, this as any);
+
+          return acc;
+        },
+        {} as {
+          [Key in keyof Required<DataType>]: (value: any) => void;
+        }
+      );
+    }
+
+    this._truthyValues = this._KEYS.reduce(
+      (acc, key) => {
+        acc[key] = true;
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: true;
+      }
+    );
+
+    const undefinedValues = this._KEYS.reduce(
+      (acc, key) => {
+        acc[key] = undefined;
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: undefined;
+      }
+    );
+
+    this._data = new ReactStateManagerStore(
+      initialValues,
+      `${this._config.uid}/data`,
+
+      this._KEYS.reduce((acc, key) => {
+        acc[key] = {
+          ...this._config.data?.[key],
+
+          onChange: (value: any) => {
+            this._validators?.[key]?.(value);
+
+            this._config.data?.[key]?.onChange?.(value);
+          },
+        };
+
+        return acc;
+      }, {} as StateManagerStoreConfigs<DataType>)
+    );
+
+    this._errors = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: ErrorType;
+    }>(undefinedValues, `${this._config.uid}/errors`, this._config.errors);
+
+    this._touched = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: boolean;
+    }>(undefinedValues, `${this._config.uid}/touched`, this._config.touched);
+
+    this._modified = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: boolean;
+    }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
+  }
+
+  public reset(values?: DataType) {
+    // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
+    this._errors.reset();
+
+    if (values) {
+      this._data.value = values;
+    } else {
+      this._data.reset();
+    }
+
+    this._touched.reset();
+    this._modified.reset();
+
+    this._config.onReset?.();
+  }
+
+  public setAllAsTouched() {
+    this._touched.value = this._truthyValues;
+  }
+
+  public setAllAsModified() {
+    this._modified.value = this._truthyValues;
+  }
+
+  public get modifiedValues() {
+    const modifiedItems = this._modified.value;
+    const dataValues = this._data.value;
+
+    const modifiedValues: Partial<DataType> = {};
+
+    for (const key in modifiedItems) {
+      if (modifiedItems[key as keyof DataType]) {
+        modifiedValues[key as keyof DataType] = dataValues[
+          key as keyof DataType
+        ] as any;
+      }
+    }
+
+    return modifiedValues;
+  }
+
+  public get hasErrors() {
+    if (!this._config.hasError)
+      throw new Error("hasError selector is not defined in the config");
+
+    return Object.values(this._errors.value).some(this._config.hasError);
+  }
+
+  public get isModified() {
+    return Object.values(this._modified.value).some((value) => !!value);
+  }
+
+  public get isTouched() {
+    return Object.values(this._touched.value).some((value) => !!value);
+  }
+
+  public get hydrated() {
+    return {
+      ...this._data.hydrated,
+      ...this._errors.hydrated,
+      ...this._modified.hydrated,
+      ...this._touched.hydrated,
+    };
+  }
+
+  public async fullFill(): Promise<any> {
+    await Promise.all([
+      this._data.fulfill(),
+      this._errors.fulfill(),
+      this._modified.fulfill(),
+      this._touched.fulfill(),
+    ]);
+
+    return this;
+  }
+}
+
+let counter = 0;
+
+export function form<
+  DataType extends Record<string, any>,
+  ErrorType = string[] | undefined | null
+>(
+  initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
+  config?: ReactStateManagerFormConfig<DataType, ErrorType>
+): ReactStateManagerForm<DataType, ErrorType> {
+  return new ReactStateManagerForm(initialValues, config);
+}
+
+export type ReactStateManagerFormConfig<
+  DataType extends Record<string, any>,
+  ErrorType = string[] | undefined | null
+> = {
+  uid: string;
+
+  getValidator?: (
+    fieldName: keyof DataType,
+    form: ReactStateManagerForm<DataType, ErrorType>
+  ) => (value: any) => void;
+
+  onReset?: () => void;
+
+  hasError?: (error: ErrorType | undefined) => boolean;
+
+  errors?: {
+    [Key in keyof DataType]?: StateConfig<ErrorType | undefined>;
+  };
+
+  touched?: {
+    [Key in keyof DataType]?: StateConfig<boolean | undefined>;
+  };
+
+  modified?: {
+    [Key in keyof DataType]?: StateConfig<boolean | undefined>;
+  };
+
+  data?: {
+    [Key in keyof DataType]?: StateConfig<DataType[Key]>;
+  };
+};
+
+type StateConfig<DataType> = Omit<TypeStateManagerConfigs<DataType>, "uid">;
