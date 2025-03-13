@@ -1,17 +1,44 @@
 import React from "react";
 
-import { TypeStateManagerConfigs } from "../state-manager";
+import { StateManager, TypeStateManagerConfigs } from "../state-manager";
 import { StateManagerStoreConfigs } from "../store";
 import { ReactStateManagerStore } from "./store";
 
 export class ReactStateManagerForm<
   DataType extends Record<string, any>,
-  ErrorType = string[] | undefined | null
+  ErrorType = string[] | undefined | null,
+  Meta = Record<string, any>
 > {
   protected readonly _KEYS: (keyof Required<DataType>)[];
 
+  public field = this.KEYS.reduce(
+    (acc, key) => {
+      acc[key] = {
+        data: this._data.entities[key],
+        error: this._errors.entities[key] as any,
+        touched: this._touched.entities[key],
+        modified: this._modified.entities[key],
+      };
+
+      return acc;
+    },
+    {} as {
+      [Key in keyof Required<DataType>]: {
+        data: StateManager<DataType[Key]>;
+        error: StateManager<ErrorType | undefined>;
+        touched: StateManager<boolean | undefined>;
+        modified: StateManager<boolean | undefined>;
+      };
+    }
+  );
+
   public get KEYS() {
     return [...this._KEYS];
+  }
+
+  public get meta() {
+    // TODO: Clone?
+    return this._config.meta;
   }
 
   public get hooks() {
@@ -280,12 +307,12 @@ export class ReactStateManagerForm<
     }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
   }
 
-  public reset(values?: DataType) {
+  public reset({ data }: { data?: DataType } = {}) {
     // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
     this._errors.reset();
 
-    if (values) {
-      this._data.value = values;
+    if (data) {
+      this._data.value = data;
     } else {
       this._data.reset();
     }
@@ -304,19 +331,30 @@ export class ReactStateManagerForm<
     this._modified.value = this._truthyValues;
   }
 
-  public get modifiedValues() {
-    const modifiedItems = this._modified.value;
+  public getModifiedValues(
+    {
+      defaultFields,
+    }: {
+      defaultFields: (keyof Required<DataType>)[];
+    } = { defaultFields: [] }
+  ) {
+    const items = this._modified.value;
+
+    defaultFields.forEach((key) => {
+      items[key] = true;
+    });
+
     const dataValues = this._data.value;
 
     const modifiedValues: Partial<DataType> = {};
 
-    for (const key in modifiedItems) {
-      if (modifiedItems[key as keyof DataType]) {
+    this.KEYS.forEach((key) => {
+      if (items[key]) {
         modifiedValues[key as keyof DataType] = dataValues[
           key as keyof DataType
         ] as any;
       }
-    }
+    });
 
     return modifiedValues;
   }
@@ -371,7 +409,8 @@ export function form<
 
 export type ReactStateManagerFormConfig<
   DataType extends Record<string, any>,
-  ErrorType = string[] | undefined | null
+  ErrorType = string[] | undefined | null,
+  Meta = Record<string, any>
 > = {
   uid: string;
 
@@ -383,6 +422,8 @@ export type ReactStateManagerFormConfig<
   onReset?: () => void;
 
   hasError?: (error: ErrorType | undefined) => boolean;
+
+  meta?: Meta;
 
   errors?: {
     [Key in keyof DataType]?: StateConfig<ErrorType | undefined>;
@@ -402,3 +443,10 @@ export type ReactStateManagerFormConfig<
 };
 
 type StateConfig<DataType> = Omit<TypeStateManagerConfigs<DataType>, "uid">;
+
+const testForm = form({
+  firstName: "",
+  lastName: "",
+});
+
+testForm.field.firstName.modified.value;
