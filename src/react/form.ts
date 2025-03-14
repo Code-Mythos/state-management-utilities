@@ -11,7 +11,7 @@ export class ReactStateManagerForm<
 > {
   protected readonly _KEYS: (keyof Required<DataType>)[];
 
-  public field = this.KEYS.reduce(
+  public fields = this.KEYS.reduce(
     (acc, key) => {
       acc[key] = {
         data: this._data.entities[key],
@@ -32,6 +32,22 @@ export class ReactStateManagerForm<
     }
   );
 
+  public getFieldValues<Key extends keyof Required<DataType>>(
+    fieldName: Key
+  ): {
+    data: Readonly<DataType[Key]>;
+    error: ErrorType | undefined;
+    touched: Readonly<boolean | undefined>;
+    modified: Readonly<boolean | undefined>;
+  } {
+    return {
+      data: this._data.entities[fieldName].value,
+      error: this._errors.entities[fieldName].value as any,
+      touched: this._touched.entities[fieldName].value,
+      modified: this._modified.entities[fieldName].value,
+    };
+  }
+
   public get KEYS() {
     return [...this._KEYS];
   }
@@ -39,6 +55,15 @@ export class ReactStateManagerForm<
   public get meta() {
     // TODO: Clone?
     return this._config.meta;
+  }
+
+  public get values() {
+    return {
+      data: this._data.value,
+      errors: this._errors.value,
+      touched: this._touched.value,
+      modified: this._modified.value,
+    };
   }
 
   public get hooks() {
@@ -443,10 +468,3 @@ export type ReactStateManagerFormConfig<
 };
 
 type StateConfig<DataType> = Omit<TypeStateManagerConfigs<DataType>, "uid">;
-
-const testForm = form({
-  firstName: "",
-  lastName: "",
-});
-
-testForm.field.firstName.modified.value;
