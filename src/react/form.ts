@@ -18,6 +18,15 @@ export class ReactStateManagerForm<
         error: this._errors.entities[key] as any,
         touched: this._touched.entities[key],
         modified: this._modified.entities[key],
+
+        getValues() {
+          return {
+            data: this.data.value,
+            error: this.error.value as any,
+            touched: this.touched.value,
+            modified: this.modified.value,
+          };
+        },
       };
 
       return acc;
@@ -28,25 +37,16 @@ export class ReactStateManagerForm<
         error: StateManager<ErrorType | undefined>;
         touched: StateManager<boolean | undefined>;
         modified: StateManager<boolean | undefined>;
+
+        getValues: () => {
+          data: Readonly<DataType[Key]>;
+          error: ErrorType | undefined;
+          touched: Readonly<boolean | undefined>;
+          modified: Readonly<boolean | undefined>;
+        };
       };
     }
   );
-
-  public getFieldValues<Key extends keyof Required<DataType>>(
-    fieldName: Key
-  ): {
-    data: Readonly<DataType[Key]>;
-    error: ErrorType | undefined;
-    touched: Readonly<boolean | undefined>;
-    modified: Readonly<boolean | undefined>;
-  } {
-    return {
-      data: this._data.entities[fieldName].value,
-      error: this._errors.entities[fieldName].value as any,
-      touched: this._touched.entities[fieldName].value,
-      modified: this._modified.entities[fieldName].value,
-    };
-  }
 
   public get KEYS() {
     return [...this._KEYS];
@@ -54,7 +54,7 @@ export class ReactStateManagerForm<
 
   public get meta() {
     // TODO: Clone?
-    return this._config.meta;
+    return (this._config.meta ?? {}) as Meta;
   }
 
   public get values() {
@@ -261,7 +261,11 @@ export class ReactStateManagerForm<
 
   constructor(
     initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
-    protected _config: ReactStateManagerFormConfig<DataType, ErrorType> = {
+    protected _config: ReactStateManagerFormConfig<
+      DataType,
+      ErrorType,
+      Meta
+    > = {
       uid: `RSMF-#${++counter}`,
     }
   ) {
@@ -424,11 +428,12 @@ let counter = 0;
 
 export function form<
   DataType extends Record<string, any>,
-  ErrorType = string[] | undefined | null
+  ErrorType = string[] | undefined | null,
+  Meta = Record<string, any>
 >(
   initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
-  config?: ReactStateManagerFormConfig<DataType, ErrorType>
-): ReactStateManagerForm<DataType, ErrorType> {
+  config?: ReactStateManagerFormConfig<DataType, ErrorType, Meta>
+): ReactStateManagerForm<DataType, ErrorType, Meta> {
   return new ReactStateManagerForm(initialValues, config);
 }
 
