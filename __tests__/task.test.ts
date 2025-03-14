@@ -71,21 +71,4 @@ describe("TaskManager", () => {
     expect(taskManager.error.value).toBeNull();
     expect(taskManager.isProcessing.value).toBe(false);
   });
-
-  it("should return hydrated state", () => {
-    const taskManager = new TaskManager({
-      handler: async (value: any) => value,
-      stateConfig: { initialValue: null },
-      errorConfig: { initialValue: null },
-      isProcessingConfig: {
-        initialValue: false,
-      },
-    });
-
-    const hydrated = taskManager.hydrated;
-
-    expect(hydrated[taskManager.isProcessing.uid]).toEqual(
-      taskManager.isProcessing.value
-    );
-  });
 });

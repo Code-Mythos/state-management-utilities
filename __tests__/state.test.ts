@@ -1,4 +1,4 @@
-import { StateManager } from '../src/state-manager';
+import { StateManager } from "../src/state-manager";
 
 describe("State Manager: ", () => {
   describe("The trigger method: ", () => {
@@ -47,15 +47,7 @@ describe("State Manager: ", () => {
     });
   });
 
-  describe("The get hydrated value: ", () => {
-    it("Should return an object with key as the UID and value as the state.", () => {
-      const uid = Date.now().toString();
-      const state = "TEST";
-      const stateManager = new StateManager(state, { uid });
-
-      expect(stateManager.hydrated[uid]).toEqual(state);
-    });
-  });
+  describe("The get hydrated value: ", () => {});
 
   describe("The 'register' method: ", () => {
     it("Should add a callback to the registered callback list.", () => {

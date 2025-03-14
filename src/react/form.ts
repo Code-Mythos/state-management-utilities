@@ -10,7 +10,7 @@ export class ReactStateManagerForm<
   ErrorType = string[] | undefined | null,
   Meta = Record<string, any>
 > {
-  protected readonly _KEYS: (keyof Required<DataType>)[];
+  protected readonly _KEYS: (keyof Required<DataType>)[] = [];
 
   public fields = this.KEYS.reduce(
     (acc, key) => {
@@ -49,7 +49,7 @@ export class ReactStateManagerForm<
     }
   );
 
-  public get KEYS() {
+  public get KEYS(): (keyof Required<DataType>)[] {
     return [...this._KEYS];
   }
 
@@ -362,11 +362,12 @@ export class ReactStateManagerForm<
       uid: `RSMF-#${++counter}`,
     }
   ) {
-    console.log({ KEYS: Object.keys(initialValues) });
-    this._KEYS = Object.keys(initialValues);
+    const _KEYS = Object.keys(initialValues);
+
+    this._KEYS = _KEYS;
 
     if (this._config.getValidator) {
-      this._validators = this.KEYS.reduce(
+      this._validators = this._KEYS.reduce(
         (acc, key) => {
           acc[key] = this._config.getValidator!(key, this as any);
 
@@ -378,7 +379,7 @@ export class ReactStateManagerForm<
       );
     }
 
-    this._truthyValues = this.KEYS.reduce(
+    this._truthyValues = this._KEYS.reduce(
       (acc, key) => {
         acc[key] = true;
         return acc;
@@ -388,7 +389,7 @@ export class ReactStateManagerForm<
       }
     );
 
-    const undefinedValues = this.KEYS.reduce(
+    const undefinedValues = this._KEYS.reduce(
       (acc, key) => {
         acc[key] = undefined;
         return acc;
@@ -402,7 +403,7 @@ export class ReactStateManagerForm<
       initialValues,
       `${this._config.uid}/data`,
 
-      this.KEYS.reduce((acc, key) => {
+      this._KEYS.reduce((acc, key) => {
         acc[key] = {
           ...this._config.data?.[key],
 

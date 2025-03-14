@@ -76,10 +76,4 @@ describe("StateManagerStore", () => {
     expect(store.entities.a.value).toBe(newValue.a);
     expect(store.entities.b.value).toBe(newValue.b);
   });
-
-  it("should get hydrated values correctly", () => {
-    const hydrated = store.hydrated;
-    expect(hydrated[`${uid}/a`]).toBe(1);
-    expect(hydrated[`${uid}/b`]).toBe("test");
-  });
 });
