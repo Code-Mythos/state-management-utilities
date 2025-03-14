@@ -362,6 +362,7 @@ export class ReactStateManagerForm<
       uid: `RSMF-#${++counter}`,
     }
   ) {
+    console.log({ KEYS: Object.keys(initialValues) });
     this._KEYS = Object.keys(initialValues);
 
     if (this._config.getValidator) {
