@@ -336,7 +336,7 @@ export class ReactStateManagerForm<
 
 let counter = 0;
 
-export function formWith<
+export function form<
   DataType extends Record<string, any>,
   ErrorType = string[] | undefined | null,
   Meta = Record<string, any>
