@@ -58,15 +58,6 @@ export class ReactStateManagerForm<
     return (this._config.meta ?? {}) as Meta;
   }
 
-  public get values() {
-    return {
-      data: this._data.value,
-      errors: this._errors.value,
-      touched: this._touched.value,
-      modified: this._modified.value,
-    };
-  }
-
   public get hooks() {
     return this._hooks;
   }
@@ -260,83 +251,6 @@ export class ReactStateManagerForm<
     },
   });
 
-  constructor(
-    initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
-    protected _config: ReactStateManagerFormConfig<
-      DataType,
-      ErrorType,
-      Meta
-    > = {
-      uid: `RSMF-#${++counter}`,
-    }
-  ) {
-    this._KEYS = Object.keys(initialValues);
-
-    if (this._config.getValidator) {
-      this._validators = this._KEYS.reduce(
-        (acc, key) => {
-          acc[key] = this._config.getValidator!(key, this as any);
-
-          return acc;
-        },
-        {} as {
-          [Key in keyof Required<DataType>]: (value: any) => void;
-        }
-      );
-    }
-
-    this._truthyValues = this._KEYS.reduce(
-      (acc, key) => {
-        acc[key] = true;
-        return acc;
-      },
-      {} as {
-        [Key in keyof Required<DataType>]: true;
-      }
-    );
-
-    const undefinedValues = this._KEYS.reduce(
-      (acc, key) => {
-        acc[key] = undefined;
-        return acc;
-      },
-      {} as {
-        [Key in keyof Required<DataType>]: undefined;
-      }
-    );
-
-    this._data = new ReactStateManagerStore(
-      initialValues,
-      `${this._config.uid}/data`,
-
-      this._KEYS.reduce((acc, key) => {
-        acc[key] = {
-          ...this._config.data?.[key],
-
-          onChange: (value: any) => {
-            this._validators?.[key]?.(value);
-
-            this._config.data?.[key]?.onChange?.(value);
-          },
-        };
-
-        return acc;
-      }, {} as StateManagerStoreConfigs<DataType>)
-    );
-
-    this._errors = new ReactStateManagerStore<{
-      [Key in keyof DataType]?: ErrorType;
-    }>(undefinedValues, `${this._config.uid}/errors`, this._config.errors);
-
-    this._touched = new ReactStateManagerStore<{
-      [Key in keyof DataType]?: boolean;
-    }>(undefinedValues, `${this._config.uid}/touched`, this._config.touched);
-
-    this._modified = new ReactStateManagerStore<{
-      [Key in keyof DataType]?: boolean;
-    }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
-  }
-
   public reset({ data }: { data?: DataType } = {}) {
     // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
     this._errors.reset();
@@ -436,6 +350,83 @@ export class ReactStateManagerForm<
     ]);
 
     return this;
+  }
+
+  constructor(
+    initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
+    protected _config: ReactStateManagerFormConfig<
+      DataType,
+      ErrorType,
+      Meta
+    > = {
+      uid: `RSMF-#${++counter}`,
+    }
+  ) {
+    this._KEYS = Object.keys(initialValues);
+
+    if (this._config.getValidator) {
+      this._validators = this._KEYS.reduce(
+        (acc, key) => {
+          acc[key] = this._config.getValidator!(key, this as any);
+
+          return acc;
+        },
+        {} as {
+          [Key in keyof Required<DataType>]: (value: any) => void;
+        }
+      );
+    }
+
+    this._truthyValues = this._KEYS.reduce(
+      (acc, key) => {
+        acc[key] = true;
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: true;
+      }
+    );
+
+    const undefinedValues = this._KEYS.reduce(
+      (acc, key) => {
+        acc[key] = undefined;
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: undefined;
+      }
+    );
+
+    this._data = new ReactStateManagerStore(
+      initialValues,
+      `${this._config.uid}/data`,
+
+      this._KEYS.reduce((acc, key) => {
+        acc[key] = {
+          ...this._config.data?.[key],
+
+          onChange: (value: any) => {
+            this._validators?.[key]?.(value);
+
+            this._config.data?.[key]?.onChange?.(value);
+          },
+        };
+
+        return acc;
+      }, {} as StateManagerStoreConfigs<DataType>)
+    );
+
+    this._errors = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: ErrorType;
+    }>(undefinedValues, `${this._config.uid}/errors`, this._config.errors);
+
+    this._touched = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: boolean;
+    }>(undefinedValues, `${this._config.uid}/touched`, this._config.touched);
+
+    this._modified = new ReactStateManagerStore<{
+      [Key in keyof DataType]?: boolean;
+    }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
   }
 }
 
