@@ -1,11 +1,11 @@
 import type { TypeStateManagerConfigs } from "src/state-manager";
 
-import { produce } from 'immer';
-import React from 'react';
+import { produce } from "immer";
+import React from "react";
 
-import { StateManagerStore, StateManagerStoreConfigs } from '../store';
-import { useDehydrate } from './dehydrate';
-import { ReactStateManager } from './state-manager';
+import { StateManagerStore, StateManagerStoreConfigs } from "../store";
+import { useDehydrate } from "./dehydrate";
+import { ReactStateManager } from "./state-manager";
 
 export class ReactStateManagerStore<
   DataType extends Record<string, any>
@@ -26,9 +26,25 @@ export class ReactStateManagerStore<
     useState: () => {
       const uid = React.useId();
 
-      useDehydrate();
+      const dehydrated = useDehydrate();
 
-      const [state, setStateInternal] = React.useState(this.value);
+      const storeValues = React.useMemo(() => {
+        const values = this.value;
+
+        if (!dehydrated) return values;
+
+        for (const key in this.entities) {
+          const __uid = this.entities[key].uid;
+          const hydratedValue = dehydrated?.data?.[__uid]?.value;
+
+          if (hydratedValue === undefined) continue;
+          values[key] = hydratedValue;
+        }
+
+        return values;
+      }, [dehydrated]);
+
+      const [state, setStateInternal] = React.useState(storeValues);
 
       React.useEffect(() => {
         for (const key in this.entities) {

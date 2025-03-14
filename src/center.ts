@@ -7,6 +7,8 @@ import { produce } from "immer";
  * logs state changes, and provides methods for state hydration and dehydration.
  */
 class StateManagerCenter {
+  protected _cacheRefs: Record<string, CacheRef> = {};
+
   /**
    * A record of state managers identified by unique IDs.
    */
@@ -233,33 +235,96 @@ class StateManagerCenter {
    * @returns The hydrated states.
    * @throws An error if the entity does not have a `hydrated` property.
    */
-  public async hydrate(...entities: Promise<any>[]) {
+
+  public get hydrated() {
+    return {
+      generate: async (
+        ...entries: Promise<{
+          update: (record: Hydrated["data"]) => void;
+          value: any;
+        }>[]
+      ) => await this._generateHydrated({ entries }),
+
+      config: ({ initial }: { initial: Hydrated }) => ({
+        generate: async (
+          ...entries: Promise<{
+            update: (record: Hydrated["data"]) => void;
+            value: any;
+          }>[]
+        ) => await this._generateHydrated({ entries, initial }),
+      }),
+    };
+  }
+
+  protected async _generateHydrated({
+    entries,
+    initial,
+  }: {
+    initial?: Hydrated;
+    entries: Promise<{
+      update: (record: Hydrated["data"]) => void;
+      value: any;
+    }>[];
+  }): Promise<{ hydrated: Hydrated; values: any[] }> {
     this._initializeHydration();
 
-    const pointers = await Promise.all(entities);
+    const updaters = await Promise.all(entries);
 
-    return pointers.reduce((acc, pointer) => {
-      if (typeof pointer !== "object") return acc;
+    const timestamp = Date.now();
 
-      const hydrated = pointer.hydrated;
+    const hydrated: Hydrated = initial ?? {
+      data: {},
+      timestamp,
+      id: `${timestamp}`,
+    };
 
-      if (typeof hydrated !== "object") return acc;
+    const values: any[] = [];
 
-      return { ...acc, ...hydrated };
-    }, {} as Record<string, any>);
+    updaters.forEach(({ update, value }) => {
+      update(hydrated.data);
+
+      values.push(value);
+    });
+
+    return Object.freeze({ hydrated, values });
+  }
+
+  public _registerCacheRef({ uid, ref }: { uid: string; ref: any }) {
+    this._cacheRefs[uid] = ref;
+
+    return this;
   }
 
   /**
    * Dehydrates the state managers with the provided states.
    * @param states - The states to be dehydrated.
    */
-  public dehydrate(states: Record<string, any>) {
-    return this.apply({
-      updatedUID: "APPLIED",
-      timestamp: -1,
-      number: -1,
-      states,
-    });
+  public async dehydrate(hydrated: Hydrated) {
+    if (!hydrated) return;
+
+    for (const uid in hydrated.data) {
+      const data = hydrated.data[uid];
+      data.timestamp = data.timestamp ? data.timestamp : hydrated.timestamp;
+
+      this._updateCache(data);
+    }
+  }
+
+  protected async _updateCache({
+    value,
+    hash,
+    cacheRef,
+    timestamp,
+  }: HydratedItem) {
+    if (!hash || !cacheRef || !timestamp) return;
+
+    const ref = this._cacheRefs[cacheRef];
+
+    const { updatedAt } = (await ref?._getCache?.(hash)) ?? {};
+
+    if (updatedAt && updatedAt >= timestamp) return;
+
+    ref?._setCache?.(hash, { data: value, updatedAt: timestamp });
   }
 
   /**
@@ -306,3 +371,24 @@ export type CenterRecordType = {
   states: Record<string, any>;
   number: number;
 };
+
+export type Hydrated = {
+  id: string;
+  data: Record<string, HydratedItem>;
+  timestamp: number;
+};
+
+export type HydratedItem = {
+  value: any;
+  hash?: string;
+  cacheRef?: string;
+  timestamp?: number;
+};
+
+export interface CacheRef {
+  _getCache(
+    cacheKey: string
+  ): Promise<{ data: any; updatedAt: number } | undefined>;
+
+  _setCache(cacheKey: string, value: { data: any; updatedAt: number }): void;
+}

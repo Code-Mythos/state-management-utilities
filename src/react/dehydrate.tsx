@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import type { Hydrated } from "src/center";
 
 import React from "react";
 import { center } from "src/center";
@@ -6,33 +7,43 @@ import { center } from "src/center";
 import { Memo } from "./dev-tool/Memo";
 
 export function DehydrateStateManager({
-  props,
+  pageProps,
   children,
 }: {
-  props?: { hydrate: Record<string, any> | undefined } & Record<string, any>;
-  children?: React.ReactNode;
+  pageProps?: { hydrated?: Hydrated } & Record<string, any>;
+  children: React.ReactNode;
 }) {
-  const isDehydrated = React.useRef<Record<string, any> | undefined>(undefined);
+  const dehydratedRef = React.useRef<Record<string, true>>({});
 
-  const dehydrate = React.useCallback(() => {
-    if (!props?.hydrate || isDehydrated.current === props.hydrate) return;
+  // const dehydrate = React.useCallback(() => {
+  //   if (!props?.hydrated || dehydratedRef.current === props.hydrated) return;
 
-    isDehydrated.current = props.hydrate;
+  //   dehydratedRef.current = props.hydrated;
 
-    center.dehydrate(props.hydrate);
-  }, [props?.hydrate]);
+  //   center.dehydrate(props.hydrated);
+  // }, [props?.hydrated]);
+
+  React.useEffect(() => {
+    const hydratedIDs = dehydratedRef.current;
+
+    if (!pageProps?.hydrated || hydratedIDs[pageProps.hydrated.id]) return;
+
+    center.dehydrate(pageProps.hydrated);
+
+    hydratedIDs[pageProps.hydrated.id] = true;
+    dehydratedRef.current = hydratedIDs;
+  }, [pageProps?.hydrated]);
 
   return (
-    <DehydrateContext.Provider value={dehydrate}>
+    <DehydrateContext.Provider value={pageProps?.hydrated}>
       <Memo>{children}</Memo>
     </DehydrateContext.Provider>
   );
 }
 
-const DehydrateContext = React.createContext<(() => void) | undefined>(
-  () => {}
-);
+const DehydrateContext = React.createContext<Hydrated | undefined>(undefined);
 
 export function useDehydrate() {
-  return React.useContext(DehydrateContext)?.();
+  // return React.useContext(DehydrateContext)?.();
+  return React.useContext(DehydrateContext);
 }

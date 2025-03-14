@@ -1,4 +1,5 @@
 import React from "react";
+import { Hydrated } from "src/center";
 
 import { StateManager, TypeStateManagerConfigs } from "../state-manager";
 import { StateManagerStoreConfigs } from "../store";
@@ -403,12 +404,26 @@ export class ReactStateManagerForm<
     return Object.values(this._touched.value).some((value) => !!value);
   }
 
-  public get hydrated() {
+  hydrate(value: {
+    data: DataType;
+    errors: { [Key in keyof DataType]?: ErrorType };
+    touched: { [Key in keyof DataType]?: boolean };
+    modified: { [Key in keyof DataType]?: boolean };
+  }) {
+    const data = this._data.hydrate(value.data ?? {});
+    const errors = this._errors.hydrate(value.errors ?? {});
+    const touched = this._touched.hydrate(value.touched ?? {});
+    const modified = this._modified.hydrate(value.modified ?? {});
+
     return {
-      ...this._data.hydrated,
-      ...this._errors.hydrated,
-      ...this._modified.hydrated,
-      ...this._touched.hydrated,
+      update: (record: Hydrated["data"]) => {
+        data.update(record);
+        errors.update(record);
+        touched.update(record);
+        modified.update(record);
+      },
+
+      value,
     };
   }
 

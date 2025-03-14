@@ -2,7 +2,7 @@
 
 import { TaskManagerCore } from "task-manager-core";
 
-import { center } from "./center";
+import { center, Hydrated } from "./center";
 import { StateManager } from "./state-manager";
 
 import type { TypeStateManagerConfigs } from "./state-manager";
@@ -50,17 +50,6 @@ export class TaskManager<
 
   public get uid() {
     return this._uid;
-  }
-
-  protected _hydrate = () => ({
-    [this._requestDetails_.uid]: this._requestDetails_.value ?? null,
-    [this.isProcessing.uid]: this.isProcessing.value ?? null,
-    [this.state.uid]: this.state.value ?? null,
-    [this.error.uid]: this.error.value ?? null,
-  });
-
-  public get hydrated() {
-    return this._hydrate();
   }
 
   public override get requestDetails(): Readonly<{
@@ -166,6 +155,8 @@ export class TaskManager<
         requestParamsConfig?.initialValue ?? this._defaultRequestDetails,
       configs: requestParamsConfig ?? {},
     });
+
+    center._registerCacheRef({ uid: this.uid, ref: this });
   }
 
   public override reset() {
@@ -186,6 +177,50 @@ export class TaskManager<
     config: RequestConfigBase<Task, TaskError>;
   }): boolean {
     return center.isHydration ? false : super._isPrevented({ hash, config });
+  }
+
+  async hydrate(...parameters: Parameters<Task>) {
+    const result = await this._requestCore({
+      parameters,
+      config: { isInvalidate: true },
+    });
+
+    const { hash, createdAt, updatedAt, data, error, isError } = result;
+
+    const cacheRef = this.uid;
+    const UIDs = {
+      state: this.state.uid,
+      error: this.error.uid,
+      details: this._requestDetails_.uid,
+    };
+
+    const details: RequestDataRecordType<Task> = {
+      updatedAt,
+      createdAt,
+      isFailed: isError,
+      isSucceed: !isError,
+      parameters,
+    };
+
+    return {
+      update: (record: Hydrated["data"]) => {
+        record[UIDs.state] = {
+          value: data,
+          hash,
+          cacheRef,
+        };
+
+        record[UIDs.error] = {
+          value: error,
+        };
+
+        record[UIDs.details] = {
+          value: details,
+        };
+      },
+
+      value: result,
+    };
   }
 }
 

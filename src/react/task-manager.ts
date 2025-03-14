@@ -1,11 +1,13 @@
+import { TaskManager } from "../task-manager";
+import { ReactStateManager } from "./state-manager";
+
 import type {
   TaskManagerConfig,
   StateManagerConfigs,
   RequestDataRecordType,
+  RequestConfigBase,
+  SharedConfigs,
 } from "../task-manager";
-
-import { TaskManager } from "../task-manager";
-import { ReactStateManager } from "./state-manager";
 
 export class ReactTaskManager<
   Task extends (...args: any) => Promise<any>,

@@ -1,3 +1,5 @@
+import type { Hydrated } from "src/center";
+
 import React from "react";
 
 import { StateManager, TypeStateManagerConfigs } from "../state-manager";
@@ -8,9 +10,12 @@ export class ReactStateManager<StateType> extends StateManager<StateType> {
     useState: () => {
       const uID = React.useId();
 
-      useDehydrate();
+      const dehydrated = useDehydrate();
+      const hydratedValue = dehydrated?.data?.[this.uid]?.value;
 
-      const [state, setInternalState] = React.useState<StateType>(this.value);
+      const [state, setInternalState] = React.useState<StateType>(
+        hydratedValue === undefined ? this.value : hydratedValue
+      );
 
       React.useEffect(() => {
         this.register({

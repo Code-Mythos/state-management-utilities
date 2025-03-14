@@ -1,6 +1,7 @@
-import type { TypeStateManagerConfigs } from "./state-manager";
-
+import { Hydrated } from "./center";
 import { StateManager } from "./state-manager";
+
+import type { TypeStateManagerConfigs } from "./state-manager";
 
 export class StateManagerStore<
   DataType extends Record<string, any>,
@@ -68,14 +69,18 @@ export class StateManagerStore<
     return this;
   }
 
-  public get hydrated() {
-    const hydratedClone: Record<string, any> = {};
+  hydrate(value: DataType) {
+    return {
+      update: (record: Hydrated["data"]) => {
+        for (const key in this.entities) {
+          if (value[key] === undefined) continue;
 
-    for (const key in this.entities) {
-      hydratedClone[this.entities[key].uid] = this.entities[key].value;
-    }
+          record[this.entities[key].uid] = { value: value[key] };
+        }
+      },
 
-    return hydratedClone;
+      value,
+    };
   }
 }
 

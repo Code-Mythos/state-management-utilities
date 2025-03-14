@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.52",
+  "version": "0.9.53",
   "description": "State management utilities",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -147,7 +147,7 @@
     "react": "^18.3.1",
     "react-spinners": "^0.14.1",
     "react-window": "^1.8.10",
-    "task-manager-core": "^0.9.12"
+    "task-manager-core": "^0.9.13"
   },
   "scripts": {
     "prepare": "npm run build",

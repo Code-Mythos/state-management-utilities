@@ -1,7 +1,7 @@
 import { produce } from "immer";
 import cloneDeep from "lodash.clonedeep";
 
-import { center } from "./center";
+import { center, Hydrated } from "./center";
 
 /**
  * This class provides methods to register, un-register, update, and retrieve state, ensuring components are updated efficiently and consistently.
@@ -38,19 +38,6 @@ export class StateManager<StateType> {
     (newState: StateType) => void | Promise<void>
   > = {};
 
-  /**
-   * Hydrates the current state value.
-   *
-   * @returns An object containing the current state value if it is defined,
-   *          otherwise an empty object.
-   */
-  protected _hydrate = () =>
-    this.value === undefined ? {} : { [this.uid]: this._value };
-
-  public get hydrated() {
-    return this._hydrate();
-  }
-
   constructor(
     /**
      * Initial state of the manager.
@@ -82,6 +69,18 @@ export class StateManager<StateType> {
 
   public set value(newState: StateType) {
     this._setValueHandler(newState);
+  }
+
+  hydrate(value: StateType) {
+    return {
+      update: (record: Hydrated["data"]) => {
+        record[this.uid] = {
+          value,
+        };
+      },
+
+      value,
+    };
   }
 
   /**
