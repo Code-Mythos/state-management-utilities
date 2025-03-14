@@ -365,7 +365,7 @@ export class ReactStateManagerForm<
     this._KEYS = Object.keys(initialValues);
 
     if (this._config.getValidator) {
-      this._validators = this._KEYS.reduce(
+      this._validators = this.KEYS.reduce(
         (acc, key) => {
           acc[key] = this._config.getValidator!(key, this as any);
 
@@ -377,7 +377,7 @@ export class ReactStateManagerForm<
       );
     }
 
-    this._truthyValues = this._KEYS.reduce(
+    this._truthyValues = this.KEYS.reduce(
       (acc, key) => {
         acc[key] = true;
         return acc;
@@ -387,7 +387,7 @@ export class ReactStateManagerForm<
       }
     );
 
-    const undefinedValues = this._KEYS.reduce(
+    const undefinedValues = this.KEYS.reduce(
       (acc, key) => {
         acc[key] = undefined;
         return acc;
@@ -401,7 +401,7 @@ export class ReactStateManagerForm<
       initialValues,
       `${this._config.uid}/data`,
 
-      this._KEYS.reduce((acc, key) => {
+      this.KEYS.reduce((acc, key) => {
         acc[key] = {
           ...this._config.data?.[key],
 
