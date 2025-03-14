@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.56",
+  "version": "0.9.57",
   "description": "State management utilities",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -98,12 +98,6 @@
       "import": {
         "types": "./dist/react/form.d.mts",
         "default": "./dist/react/form.mjs"
-      }
-    },
-    "./react/form-aggregated-fields": {
-      "import": {
-        "types": "./dist/react/formAggregatedFields.d.mts",
-        "default": "./dist/react/formAggregatedFields.mjs"
       }
     },
     "./react/useDisableLog": {
