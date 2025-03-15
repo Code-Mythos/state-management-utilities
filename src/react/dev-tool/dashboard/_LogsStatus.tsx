@@ -1,5 +1,5 @@
 import React from "react";
-import { PulseLoader } from "react-spinners";
+import PulseLoader from "react-spinners/PulseLoader";
 
 import { useLogs } from "../providers/LogsProvider";
 import { useStyles } from "../providers/StylesProvider";

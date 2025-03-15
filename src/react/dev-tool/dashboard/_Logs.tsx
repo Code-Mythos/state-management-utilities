@@ -1,6 +1,6 @@
 import throttle from "lodash.throttle";
 import React from "react";
-import { PulseLoader } from "react-spinners";
+import PulseLoader from "react-spinners/PulseLoader";
 import { FixedSizeList } from "react-window";
 
 import { useFilteredLogs } from "../providers/FilteredLogsProvider";
@@ -8,7 +8,7 @@ import { useSelectedLog } from "../providers/SelectedLogProvider";
 import { useStyles } from "../providers/StylesProvider";
 
 import type { CenterRecordType } from "../../../center";
-export default function Logs() {
+export function Logs() {
   const direction = "vertical";
   const [selectedLog] = useSelectedLog();
   const { filter, filteredLogs, isFiltering, setFilter } = useFilteredLogs();
