@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.63",
+  "version": "0.9.65",
   "description": "State management utilities",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -136,10 +136,10 @@
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.2.3",
     "tsup": "^8.3.5",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
-    "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
     "immer": "^10.1.1",
     "lodash.clonedeep": "^4.5.0",

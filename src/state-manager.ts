@@ -74,9 +74,10 @@ export class StateManager<StateType> {
   hydrate(value: StateType) {
     return {
       update: (record: Hydrated["data"]) => {
-        record[this.uid] = {
-          value,
-        };
+        if (value !== undefined)
+          record[this.uid] = {
+            value,
+          };
       },
 
       value,

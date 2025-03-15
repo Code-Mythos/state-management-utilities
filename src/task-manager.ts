@@ -19,8 +19,9 @@ export class TaskManager<
   ErrorManager extends StateManager<TaskError | null>,
   IsProcessingManager extends StateManager<boolean>,
   RequestParamsManager extends StateManager<RequestDataRecordType<Task>>,
-  TaskError = any
-> extends TaskManagerCore<Task, TaskError> {
+  TaskError = any,
+  Meta = Record<string, any>
+> extends TaskManagerCore<Task, TaskError, Meta> {
   protected _initializeManager<Manager>({
     name,
     initialValue,
@@ -74,10 +75,11 @@ export class TaskManager<
     requestParamsConfig,
 
     ...configs
-  }: TaskManagerConfig<Task, TaskError>) {
+  }: TaskManagerConfig<Task, TaskError, Meta>) {
     const defaultEventHandlers: TaskManagerCoreConfig<
       Task,
-      TaskError
+      TaskError,
+      Meta
     >["defaultEventHandlers"] = {
       ...configs.defaultEventHandlers,
 
@@ -125,7 +127,7 @@ export class TaskManager<
     const newConfigs = {
       ...configs,
       defaultEventHandlers,
-    } as TaskManagerCoreConfig<Task, TaskError>;
+    } as TaskManagerCoreConfig<Task, TaskError, Meta>;
 
     super(newConfigs);
 
@@ -174,7 +176,7 @@ export class TaskManager<
     config,
   }: {
     hash: string;
-    config: RequestConfigBase<Task, TaskError>;
+    config: RequestConfigBase<Task, TaskError, Meta>;
   }): boolean {
     return center.isHydration ? false : super._isPrevented({ hash, config });
   }
@@ -197,22 +199,24 @@ export class TaskManager<
     const details: RequestDataRecordType<Task> = {
       updatedAt,
       createdAt,
-      isFailed: isError,
+      isFailed: Boolean(isError),
       isSucceed: !isError,
       parameters,
     };
 
     return {
       update: (record: Hydrated["data"]) => {
-        record[UIDs.state] = {
-          value: data,
-          hash,
-          cacheRef,
-        };
+        if (data !== undefined)
+          record[UIDs.state] = {
+            value: data,
+            hash,
+            cacheRef,
+          };
 
-        record[UIDs.error] = {
-          value: error,
-        };
+        if (error !== undefined)
+          record[UIDs.error] = {
+            value: error,
+          };
 
         record[UIDs.details] = {
           value: details,
@@ -232,7 +236,8 @@ export type StateManagerConfigs<StateType> = {
 
 export type TaskManagerConfig<
   Task extends (...args: any) => Promise<any>,
-  TaskError = any
+  TaskError = any,
+  Meta = Record<string, any>
 > = {
   uid?: string;
 
@@ -242,7 +247,7 @@ export type TaskManagerConfig<
   errorConfig?: StateManagerConfigs<TaskError | undefined>;
   isProcessingConfig?: StateManagerConfigs<boolean>;
   requestParamsConfig?: StateManagerConfigs<RequestDataRecordType<Task>>;
-} & TaskManagerCoreConfig<Task, TaskError>;
+} & TaskManagerCoreConfig<Task, TaskError, Meta>;
 
 export type {
   RequestConfigBase,
