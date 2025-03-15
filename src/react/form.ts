@@ -1,6 +1,6 @@
 import React from "react";
-import { Hydrated } from "src/center";
 
+import { Hydrated } from "../center";
 import { StateManager, TypeStateManagerConfigs } from "../state-manager";
 import { StateManagerStoreConfigs } from "../store";
 import { ReactStateManagerStore } from "./store";

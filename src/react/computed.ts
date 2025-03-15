@@ -1,7 +1,7 @@
 import React from "react";
-import { Computed } from "src/computed";
-import { TypeStateManagerConfigs } from "src/state-manager";
 
+import { Computed } from "../computed";
+import { TypeStateManagerConfigs } from "../state-manager";
 import { useDehydrate } from "./dehydrate";
 import { ReactStateManager } from "./state-manager";
 

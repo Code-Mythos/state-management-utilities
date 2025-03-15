@@ -1,4 +1,4 @@
-import type { TypeStateManagerConfigs } from "src/state-manager";
+import type { TypeStateManagerConfigs } from "../state-manager";
 
 import { produce } from "immer";
 import React from "react";

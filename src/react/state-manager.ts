@@ -1,5 +1,3 @@
-import type { Hydrated } from "src/center";
-
 import React from "react";
 
 import { StateManager, TypeStateManagerConfigs } from "../state-manager";

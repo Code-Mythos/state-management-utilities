@@ -1,9 +1,9 @@
 /* istanbul ignore file */
-import type { Hydrated } from "src/center";
+import type { Hydrated } from "../center";
 
 import React from "react";
-import { center } from "src/center";
 
+import { center } from "../center";
 import { Memo } from "./dev-tool/Memo";
 
 export function DehydrateStateManager({
