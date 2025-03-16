@@ -238,20 +238,12 @@ class StateManagerCenter {
 
   public get hydrated() {
     return {
-      generate: async (
-        ...entries: Promise<{
-          update: (record: Hydrated["data"]) => void;
-          value: any;
-        }>[]
-      ) => await this._generateHydrated({ entries }),
+      generate: async (...entries: HydratedEntries) =>
+        await this._generateHydrated({ entries }),
 
       config: ({ initial }: { initial: Hydrated }) => ({
-        generate: async (
-          ...entries: Promise<{
-            update: (record: Hydrated["data"]) => void;
-            value: any;
-          }>[]
-        ) => await this._generateHydrated({ entries, initial }),
+        generate: async (...entries: HydratedEntries) =>
+          await this._generateHydrated({ entries, initial }),
       }),
     };
   }
@@ -261,10 +253,7 @@ class StateManagerCenter {
     initial,
   }: {
     initial?: Hydrated;
-    entries: Promise<{
-      update: (record: Hydrated["data"]) => void;
-      value: any;
-    }>[];
+    entries: HydratedEntries;
   }): Promise<{ hydrated: Hydrated; values: any[] }> {
     this._initializeHydration();
 
@@ -370,6 +359,13 @@ export type CenterRecordType = {
   timestamp: number;
   states: Record<string, any>;
   number: number;
+};
+
+export type HydratedEntries = (Promise<HydratedEntry> | HydratedEntry)[];
+
+export type HydratedEntry = {
+  update: (record: Hydrated["data"]) => void;
+  value: any;
 };
 
 export type Hydrated = {

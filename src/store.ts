@@ -1,4 +1,4 @@
-import { Hydrated } from "./center";
+import type { Hydrated, HydratedEntry } from "./center";
 import { StateManager } from "./state-manager";
 
 import type { TypeStateManagerConfigs } from "./state-manager";
@@ -69,9 +69,9 @@ export class StateManagerStore<
     return this;
   }
 
-  hydrate(value: DataType) {
+  hydrate(value: DataType): HydratedEntry {
     return {
-      update: (record: Hydrated["data"]) => {
+      update: (record) => {
         for (const key in this.entities) {
           if (value[key] === undefined) continue;
 

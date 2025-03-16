@@ -2,9 +2,10 @@
 
 import { TaskManagerCore } from "task-manager-core";
 
-import { center, Hydrated } from "./center";
+import { center } from "./center";
 import { StateManager } from "./state-manager";
 
+import type { Hydrated, HydratedEntry } from "./center";
 import type { TypeStateManagerConfigs } from "./state-manager";
 
 import type {
@@ -181,7 +182,7 @@ export class TaskManager<
     return center.isHydration ? false : super._isPrevented({ hash, config });
   }
 
-  async hydrate(...parameters: Parameters<Task>) {
+  async hydrate(...parameters: Parameters<Task>): Promise<HydratedEntry> {
     const result = await this._requestCore({
       parameters,
       config: { isInvalidate: true },
@@ -205,7 +206,7 @@ export class TaskManager<
     };
 
     return {
-      update: (record: Hydrated["data"]) => {
+      update: (record) => {
         if (data !== undefined)
           record[UIDs.state] = {
             value: data,
