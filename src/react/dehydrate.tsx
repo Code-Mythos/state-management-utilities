@@ -15,14 +15,6 @@ export function DehydrateStateManager({
 }) {
   const dehydratedRef = React.useRef<Record<string, true>>({});
 
-  // const dehydrate = React.useCallback(() => {
-  //   if (!props?.hydrated || dehydratedRef.current === props.hydrated) return;
-
-  //   dehydratedRef.current = props.hydrated;
-
-  //   center.dehydrate(props.hydrated);
-  // }, [props?.hydrated]);
-
   React.useEffect(() => {
     const hydratedIDs = dehydratedRef.current;
 
@@ -36,7 +28,7 @@ export function DehydrateStateManager({
 
   return (
     <DehydrateContext.Provider value={pageProps?.hydrated}>
-      <Memo>{children}</Memo>
+      {children}
     </DehydrateContext.Provider>
   );
 }

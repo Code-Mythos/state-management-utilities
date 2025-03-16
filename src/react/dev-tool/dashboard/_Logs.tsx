@@ -1,6 +1,6 @@
 import throttle from "lodash.throttle";
 import React from "react";
-import PulseLoader from "react-spinners/PulseLoader";
+import PulseLoader from "react-spinners/PulseLoader.js";
 import { FixedSizeList } from "react-window";
 
 import { useFilteredLogs } from "../providers/FilteredLogsProvider";
