@@ -84,44 +84,44 @@ export class TaskManager<
     >["defaultEventHandlers"] = {
       ...configs.defaultEventHandlers,
 
-      onCache: async (props) => {
+      onCache: async (props, instance) => {
         this.state.value = props.cache?.data ?? null;
 
         if (center.isHydration) return;
 
-        configs.defaultEventHandlers?.onCache?.(props);
+        configs.defaultEventHandlers?.onCache?.(props, instance);
       },
 
-      onRequest: async (props) => {
+      onRequest: async (props, instance) => {
         this.isProcessing.value = true;
 
         if (center.isHydration) return;
 
-        configs.defaultEventHandlers?.onRequest?.(props);
+        configs.defaultEventHandlers?.onRequest?.(props, instance);
       },
 
-      onSuccess: async (props) => {
+      onSuccess: async (props, instance) => {
         this.state.value = props.data ?? null;
 
         if (center.isHydration) return;
 
-        configs.defaultEventHandlers?.onSuccess?.(props);
+        configs.defaultEventHandlers?.onSuccess?.(props, instance);
       },
 
-      onError: async (props) => {
+      onError: async (props, instance) => {
         this.error.value = props.error;
 
         if (center.isHydration) return;
 
-        configs.defaultEventHandlers?.onError?.(props);
+        configs.defaultEventHandlers?.onError?.(props, instance);
       },
 
-      onFinally: async (props) => {
+      onFinally: async (props, instance) => {
         this.isProcessing.value = false;
 
         if (center.isHydration) return;
 
-        configs.defaultEventHandlers?.onFinally?.(props);
+        configs.defaultEventHandlers?.onFinally?.(props, instance);
       },
     };
 
