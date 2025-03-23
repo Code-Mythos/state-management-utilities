@@ -201,6 +201,10 @@ export class StateManager<StateType> {
       : cloneDeep(value);
   }
 
+  public get initialValue() {
+    return this._clone(this._initialValue);
+  }
+
   /**
    * Updates the current state using the provided updater function (it utilizes immer js).
    *

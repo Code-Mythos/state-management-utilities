@@ -251,18 +251,38 @@ export class ReactStateManagerForm<
     },
   });
 
-  public reset({ data }: { data?: DataType } = {}) {
+  public reset(
+    resetValues: {
+      data?: Partial<DataType>;
+
+      modified?: {
+        [Key in keyof DataType]?: boolean;
+      };
+      touched?: {
+        [Key in keyof DataType]?: boolean;
+      };
+      errors?: {
+        [Key in keyof DataType]?: ErrorType;
+      };
+    } = {}
+  ) {
     // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
-    this._errors.reset();
+    this._errors.value = {
+      ...this._errors.initialValues,
+      ...resetValues.errors,
+    };
 
-    if (data) {
-      this._data.value = data;
-    } else {
-      this._data.reset();
-    }
+    this._data.value = { ...this._data.initialValues, ...resetValues.data };
 
-    this._touched.reset();
-    this._modified.reset();
+    this._touched.value = {
+      ...this._touched.initialValues,
+      ...resetValues.touched,
+    };
+
+    this._modified.value = {
+      ...this._modified.initialValues,
+      ...resetValues.modified,
+    };
 
     this._config.onReset?.();
   }

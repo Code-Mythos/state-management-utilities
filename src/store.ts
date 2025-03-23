@@ -1,7 +1,9 @@
-import type { Hydrated, HydratedEntry } from "./center";
-import { StateManager } from "./state-manager";
-
+import type { HydratedEntry } from "./center";
 import type { TypeStateManagerConfigs } from "./state-manager";
+import cloneDeep from "lodash.clonedeep";
+
+import { center } from "./center";
+import { StateManager } from "./state-manager";
 
 export class StateManagerStore<
   DataType extends Record<string, any>,
@@ -9,6 +11,9 @@ export class StateManagerStore<
     [Key in keyof Required<DataType>]: StateManager<DataType[Key]>;
   }
 > {
+  protected _initialValues: {
+    [Key in keyof Required<DataType>]: DataType[Key];
+  };
   protected _KEYS: (keyof DataType)[];
   protected _initializeEntity<Key extends keyof DataType>(
     initialValue: DataType[Key],
@@ -24,6 +29,7 @@ export class StateManagerStore<
     protected readonly _uid: string = `SMS-#${++counter}`,
     protected readonly _config: StateManagerStoreConfigs<DataType> = {}
   ) {
+    this._initialValues = initialValues;
     this._KEYS = Object.keys(initialValues);
 
     this.entities = Object.freeze(
@@ -61,6 +67,12 @@ export class StateManagerStore<
     for (const key in this.entities) {
       if (this.entities[key]) this.entities[key].reset();
     }
+  }
+
+  public get initialValues() {
+    return center.disableCloning
+      ? this._initialValues
+      : cloneDeep(this._initialValues);
   }
 
   public async fulfill() {
