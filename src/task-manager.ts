@@ -65,7 +65,7 @@ export class TaskManager<
   protected override _setRequestDetails(
     updater: (prev: RequestDataRecordType<Task>) => RequestDataRecordType<Task>
   ) {
-    this._requestDetails_.set(updater);
+    this._requestDetails_.update(updater);
   }
 
   constructor({

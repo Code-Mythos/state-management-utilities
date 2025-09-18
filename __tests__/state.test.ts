@@ -29,7 +29,7 @@ describe("State Manager: ", () => {
     it("Should reset the state to the initial value.", () => {
       const stateManager = new StateManager(1);
 
-      stateManager.set((prev) => prev + 1);
+      stateManager.update((prev) => prev + 1);
 
       stateManager.reset();
 
@@ -41,7 +41,7 @@ describe("State Manager: ", () => {
     it("Should set the value of the state.", () => {
       const stateManager = new StateManager(1);
 
-      stateManager.set((prev) => prev + 1);
+      stateManager.update((prev) => prev + 1);
 
       expect(stateManager.value).toBe(2);
     });
