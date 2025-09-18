@@ -13,21 +13,9 @@ export class ReactStateManagerForm<
 > {
   protected readonly _KEYS: (keyof Required<DataType>)[] = [];
 
-  protected _fields = this.KEYS.reduce(
-    (acc, key) => {
-      acc[key] = new Entities(
-        this._data.entities[key] as any,
-        this._errors.entities[key] as any,
-        this._modified.entities[key],
-        this._touched.entities[key]
-      );
-
-      return acc;
-    },
-    {} as {
-      [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
-    }
-  );
+  protected _fields: {
+    [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
+  };
 
   public get fields(): Readonly<{
     [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
@@ -435,6 +423,22 @@ export class ReactStateManagerForm<
     this._modified = new ReactStateManagerStore<{
       [Key in keyof DataType]?: boolean;
     }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
+
+    this._fields = this.KEYS.reduce(
+      (acc, key) => {
+        acc[key] = new Entities(
+          this._data.entities[key] as any,
+          this._errors.entities[key] as any,
+          this._modified.entities[key],
+          this._touched.entities[key]
+        );
+
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
+      }
+    );
   }
 }
 
