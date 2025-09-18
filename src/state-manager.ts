@@ -211,7 +211,7 @@ export class StateManager<StateType> {
    * @param updater - A function that takes the previous state and returns the new state.
    * @returns The current instance for method chaining.
    */
-  public set(updater: (prev: StateType) => StateType) {
+  public update(updater: (prev: StateType) => StateType) {
     this.value = produce(this._value, updater);
 
     return this;

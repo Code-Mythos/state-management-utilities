@@ -63,7 +63,7 @@ export class StateManagerStore<
     return valueClone;
   }
 
-  public set(updater: (prev: DataType) => DataType) {
+  public update(updater: (prev: DataType) => DataType) {
     this.value = updater(this.value);
 
     return this;
