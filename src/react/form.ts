@@ -1,8 +1,9 @@
 import React from "react";
 
 import { Hydrated } from "../center";
-import { StateManager, TypeStateManagerConfigs } from "../state-manager";
+import { TypeStateManagerConfigs } from "../state-manager";
 import { StateManagerStoreConfigs } from "../store";
+import { ReactStateManager } from "./state-manager";
 import { ReactStateManagerStore } from "./store";
 
 export class ReactStateManagerForm<
@@ -12,42 +13,27 @@ export class ReactStateManagerForm<
 > {
   protected readonly _KEYS: (keyof Required<DataType>)[] = [];
 
-  public fields = this.KEYS.reduce(
+  protected _fields = this.KEYS.reduce(
     (acc, key) => {
-      acc[key] = {
-        data: this._data.entities[key],
-        error: this._errors.entities[key] as any,
-        touched: this._touched.entities[key],
-        modified: this._modified.entities[key],
-
-        getValues() {
-          return {
-            data: this.data.value,
-            error: this.error.value as any,
-            touched: this.touched.value,
-            modified: this.modified.value,
-          };
-        },
-      };
+      acc[key] = new Entities(
+        this._data.entities[key] as any,
+        this._errors.entities[key] as any,
+        this._modified.entities[key],
+        this._touched.entities[key]
+      );
 
       return acc;
     },
     {} as {
-      [Key in keyof Required<DataType>]: {
-        data: StateManager<DataType[Key]>;
-        error: StateManager<ErrorType | undefined>;
-        touched: StateManager<boolean | undefined>;
-        modified: StateManager<boolean | undefined>;
-
-        getValues: () => {
-          data: Readonly<DataType[Key]>;
-          error: ErrorType | undefined;
-          touched: Readonly<boolean | undefined>;
-          modified: Readonly<boolean | undefined>;
-        };
-      };
+      [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
     }
   );
+
+  public get fields(): Readonly<{
+    [Key in keyof Required<DataType>]: Entities<DataType[Key], ErrorType>;
+  }> {
+    return this._fields;
+  }
 
   public get KEYS(): (keyof Required<DataType>)[] {
     return [...this._KEYS];
@@ -464,6 +450,50 @@ export function form<
 ): ReactStateManagerForm<DataType, ErrorType, Meta> {
   return new ReactStateManagerForm(initialValues, config);
 }
+
+class Entities<DataType, ErrorType> {
+  constructor(
+    public readonly data: ReactStateManager<DataType>,
+    public readonly error: ReactStateManager<ErrorType | undefined>,
+    public readonly modified: ReactStateManager<boolean | undefined>,
+    public readonly touched: ReactStateManager<boolean | undefined>
+  ) {}
+
+  public get values(): EntitiesType<DataType, ErrorType> {
+    return {
+      data: this.data.value,
+      error: this.error.value,
+      modified: this.modified.value,
+      touched: this.touched.value,
+    };
+  }
+
+  public set values(values: EntitiesType<DataType, ErrorType>) {
+    this.data.value = values.data;
+    this.error.value = values.error;
+    this.modified.value = values.modified;
+    this.touched.value = values.touched;
+  }
+
+  public update(
+    updater: (
+      prev: EntitiesType<DataType, ErrorType>
+    ) => EntitiesType<DataType, ErrorType>
+  ) {
+    const newState = updater(this.values);
+
+    this.values = newState;
+
+    return this;
+  }
+}
+
+type EntitiesType<DataType, ErrorType> = {
+  data: DataType;
+  error: ErrorType | undefined;
+  modified: boolean | undefined;
+  touched: boolean | undefined;
+};
 
 export type ReactStateManagerFormConfig<
   DataType extends Record<string, any>,
