@@ -63,6 +63,12 @@ export class StateManagerStore<
     return valueClone;
   }
 
+  public set(updater: (prev: DataType) => DataType) {
+    this.value = updater(this.value);
+
+    return this;
+  }
+
   public reset() {
     for (const key in this.entities) {
       if (this.entities[key]) this.entities[key].reset();
