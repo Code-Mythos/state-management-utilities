@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.9.98",
+  "version": "0.9.99",
   "description": "State management utilities",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -52,10 +52,10 @@
         "default": "./dist/react/index.js"
       }
     },
-    "./react/center": {
+    "./react": {
       "import": {
-        "types": "./dist/react/center.d.ts",
-        "default": "./dist/react/center.js"
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.js"
       }
     },
     "./react/state-manager": {
