@@ -404,7 +404,7 @@ export class ReactStateManagerForm<
     };
   }
 
-  public async fullFill(): Promise<any> {
+  public async fulfill(): Promise<any> {
     await Promise.all([
       this._data.fulfill(),
       this._errors.fulfill(),
