@@ -15,6 +15,16 @@ export class Computed<DataType> extends StateManager<DataType> {
     });
   }
 
+  public override update(updater: any) {
+    throw new Error("Computed state manager value cannot be set directly.", {
+      cause: {
+        uid: this.uid,
+      },
+    });
+
+    return this;
+  }
+
   constructor(
     callback: () => DataType,
     triggers: (StateManager<any> | Computed<any>)[],

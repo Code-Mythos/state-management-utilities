@@ -40,6 +40,10 @@ export class ReactStateManagerForm<
     [Key in keyof Required<DataType>]: true;
   };
 
+  protected readonly _falsyValues: {
+    [Key in keyof Required<DataType>]: false;
+  };
+
   protected readonly _data: ReactStateManagerStore<DataType>;
 
   public get data() {
@@ -319,11 +323,19 @@ export class ReactStateManagerForm<
   }
 
   public setAllAsTouched() {
-    this._touched.value = this._truthyValues;
+    this._touched.value = { ...this._truthyValues };
+  }
+
+  public setAllAsUntouched() {
+    this._touched.value = { ...this._falsyValues };
   }
 
   public setAllAsModified() {
-    this._modified.value = this._truthyValues;
+    this._modified.value = { ...this._truthyValues };
+  }
+
+  public setAllAsUnmodified() {
+    this._modified.value = { ...this._falsyValues };
   }
 
   public getModifiedValues(
@@ -437,6 +449,16 @@ export class ReactStateManagerForm<
       },
       {} as {
         [Key in keyof Required<DataType>]: true;
+      }
+    );
+
+    this._falsyValues = this._KEYS.reduce(
+      (acc, key) => {
+        acc[key] = false;
+        return acc;
+      },
+      {} as {
+        [Key in keyof Required<DataType>]: false;
       }
     );
 
