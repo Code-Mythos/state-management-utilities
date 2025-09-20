@@ -53,10 +53,13 @@ export class ReactStateManagerStore<
             uid,
             callback: (newValue) => {
               setStateInternal((prev) =>
-                produce<DataType, DataType>(prev, (draft) => {
-                  draft[key] = newValue;
-                  return draft;
-                })
+                produce<Required<DataType>, Required<DataType>>(
+                  prev,
+                  (draft) => {
+                    draft[key] = newValue;
+                    return draft;
+                  }
+                )
               );
             },
           });
