@@ -47,9 +47,9 @@ export class StateManagerStore<
     );
   }
 
-  public set value(value: DataType) {
-    for (const key in this.entities) {
-      if (this.entities[key]) this.entities[key].value = value?.[key] as any;
+  public set value(value: Partial<DataType>) {
+    for (const key in value) {
+      this.entities[key].value = value[key] as any;
     }
   }
 
@@ -63,7 +63,11 @@ export class StateManagerStore<
     return valueClone;
   }
 
-  public update(updater: DataType | ((prev: DataType) => DataType)) {
+  public update(
+    updater:
+      | Partial<DataType>
+      | ((prev: Required<DataType>) => Partial<DataType>)
+  ) {
     this.value = typeof updater === "function" ? updater(this.value) : updater;
 
     return this;
