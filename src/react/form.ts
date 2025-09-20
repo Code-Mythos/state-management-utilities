@@ -70,7 +70,12 @@ export class ReactStateManagerForm<
     return this._modified.entities;
   }
 
-  public get value() {
+  public get value(): {
+    data: DataType;
+    errors: { [Key in keyof DataType]: ErrorType | undefined };
+    touched: { [Key in keyof DataType]: boolean | undefined };
+    modified: { [Key in keyof DataType]: boolean | undefined };
+  } {
     return {
       data: this._data.value,
       errors: this._errors.value,
@@ -80,26 +85,78 @@ export class ReactStateManagerForm<
   }
 
   public set value(newValues: {
-    data?: DataType;
-    errors?: { [Key in keyof DataType]?: ErrorType };
-    touched?: { [Key in keyof DataType]?: boolean };
-    modified?: { [Key in keyof DataType]?: boolean };
+    data?: Partial<DataType>;
+    errors?: { [Key in keyof DataType]?: ErrorType | undefined };
+    touched?: { [Key in keyof DataType]?: boolean | undefined };
+    modified?: { [Key in keyof DataType]?: boolean | undefined };
   }) {
+    const previousValues = this.value;
+
     if (newValues.data) {
-      this._data.value = newValues.data;
+      this._data.value = { ...previousValues.data, ...newValues.data };
     }
 
     if (newValues.errors) {
-      this._errors.value = newValues.errors;
+      this._errors.value = { ...previousValues.errors, ...newValues.errors };
     }
 
     if (newValues.touched) {
-      this._touched.value = newValues.touched;
+      this._touched.value = { ...previousValues.touched, ...newValues.touched };
     }
 
     if (newValues.modified) {
-      this._modified.value = newValues.modified;
+      this._modified.value = {
+        ...previousValues.modified,
+        ...newValues.modified,
+      };
     }
+  }
+
+  public update(
+    updater:
+      | {
+          data?: Partial<DataType>;
+          errors?: { [Key in keyof DataType]?: ErrorType | undefined };
+          touched?: { [Key in keyof DataType]?: boolean | undefined };
+          modified?: { [Key in keyof DataType]?: boolean | undefined };
+        }
+      | ((prev: {
+          data: DataType;
+          errors: { [Key in keyof DataType]: ErrorType | undefined };
+          touched: { [Key in keyof DataType]: boolean | undefined };
+          modified: { [Key in keyof DataType]: boolean | undefined };
+        }) => {
+          data?: Partial<DataType>;
+          errors?: { [Key in keyof DataType]?: ErrorType | undefined };
+          touched?: { [Key in keyof DataType]?: boolean | undefined };
+          modified?: { [Key in keyof DataType]?: boolean | undefined };
+        })
+  ) {
+    const previousValues = this.value;
+
+    const newValues =
+      typeof updater === "function" ? updater(previousValues) : updater;
+
+    if (newValues.data) {
+      this._data.value = { ...previousValues.data, ...newValues.data };
+    }
+
+    if (newValues.errors) {
+      this._errors.value = { ...previousValues.errors, ...newValues.errors };
+    }
+
+    if (newValues.touched) {
+      this._touched.value = { ...previousValues.touched, ...newValues.touched };
+    }
+
+    if (newValues.modified) {
+      this._modified.value = {
+        ...previousValues.modified,
+        ...newValues.modified,
+      };
+    }
+
+    return this;
   }
 
   protected readonly _validators:

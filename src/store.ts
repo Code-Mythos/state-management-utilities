@@ -53,8 +53,8 @@ export class StateManagerStore<
     }
   }
 
-  public get value(): DataType {
-    const valueClone: DataType = {} as any;
+  public get value(): Required<DataType> {
+    const valueClone: Required<DataType> = {} as any;
 
     for (const key in this.entities) {
       if (this.entities[key]) valueClone[key] = this.entities[key].value as any;
@@ -63,8 +63,8 @@ export class StateManagerStore<
     return valueClone;
   }
 
-  public update(updater: (prev: DataType) => DataType) {
-    this.value = updater(this.value);
+  public update(updater: DataType | ((prev: DataType) => DataType)) {
+    this.value = typeof updater === "function" ? updater(this.value) : updater;
 
     return this;
   }
