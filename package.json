@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "State management utilities",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -120,6 +120,7 @@
     "react",
     "query",
     "preact",
+    "signals",
     "next",
     "js"
   ],
