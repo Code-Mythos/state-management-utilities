@@ -383,11 +383,11 @@ export class ReactStateManagerForm<
 
   hydrate(value: {
     data: DataType;
-    errors: { [Key in keyof DataType]?: ErrorType };
-    touched: { [Key in keyof DataType]?: boolean };
-    modified: { [Key in keyof DataType]?: boolean };
+    errors?: { [Key in keyof DataType]?: ErrorType | undefined };
+    touched?: { [Key in keyof DataType]?: boolean | undefined };
+    modified?: { [Key in keyof DataType]?: boolean | undefined };
   }) {
-    const data = this._data.hydrate(value.data ?? {});
+    const data = this._data.hydrate(value.data);
     const errors = this._errors.hydrate(value.errors ?? {});
     const touched = this._touched.hydrate(value.touched ?? {});
     const modified = this._modified.hydrate(value.modified ?? {});
