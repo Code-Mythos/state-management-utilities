@@ -6,7 +6,7 @@ import { StateManagerStoreConfigs } from "../store";
 import { ReactStateManager } from "./state-manager";
 import { ReactStateManagerStore } from "./store";
 
-export class ReactStateManagerForm<
+export class ReactFormManager<
   DataType extends Record<string, any>,
   ErrorType = string[] | undefined | null,
   Meta = Record<string, any>
@@ -417,11 +417,7 @@ export class ReactStateManagerForm<
 
   constructor(
     initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
-    protected _config: ReactStateManagerFormConfig<
-      DataType,
-      ErrorType,
-      Meta
-    > = {
+    protected _config: ReactFormManagerConfig<DataType, ErrorType, Meta> = {
       uid: `RSMF-#${++counter}`,
     }
   ) {
@@ -529,9 +525,9 @@ export function form<
   Meta = Record<string, any>
 >(
   initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
-  config?: ReactStateManagerFormConfig<DataType, ErrorType, Meta>
-): ReactStateManagerForm<DataType, ErrorType, Meta> {
-  return new ReactStateManagerForm(initialValues, config);
+  config?: ReactFormManagerConfig<DataType, ErrorType, Meta>
+): ReactFormManager<DataType, ErrorType, Meta> {
+  return new ReactFormManager(initialValues, config);
 }
 
 class Entities<DataType, ErrorType> {
@@ -578,7 +574,7 @@ type EntitiesType<DataType, ErrorType> = {
   touched: boolean | undefined;
 };
 
-export type ReactStateManagerFormConfig<
+export type ReactFormManagerConfig<
   DataType extends Record<string, any>,
   ErrorType = string[] | undefined | null,
   Meta = Record<string, any>
@@ -587,7 +583,7 @@ export type ReactStateManagerFormConfig<
 
   getValidator?: (
     fieldName: keyof DataType,
-    form: ReactStateManagerForm<DataType, ErrorType>
+    form: ReactFormManager<DataType, ErrorType>
   ) => (value: any) => void;
 
   onReset?: () => void;

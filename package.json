@@ -1,6 +1,6 @@
 {
   "name": "state-management-utilities",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "State management utilities",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
