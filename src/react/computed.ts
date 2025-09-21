@@ -1,11 +1,11 @@
 import React from "react";
 
-import { Computed } from "../computed";
+import { ComputedManager } from "../computed";
 import { TypeStateManagerConfigs } from "../state-manager";
 import { useDehydrate } from "./dehydrate";
 import { ReactStateManager } from "./state-manager";
 
-export class ReactComputed<DataType> extends Computed<DataType> {
+export class ReactComputedManager<DataType> extends ComputedManager<DataType> {
   protected _hooks = Object.freeze({
     useState: () => {
       const uid = React.useId();
@@ -47,8 +47,8 @@ export class ReactComputed<DataType> extends Computed<DataType> {
 
 export function computed<Callback extends () => any>(
   callback: Callback,
-  triggers: (ReactStateManager<any> | ReactComputed<any>)[],
+  triggers: (ReactStateManager<any> | ReactComputedManager<any>)[],
   config?: TypeStateManagerConfigs<ReturnType<Callback>>
 ) {
-  return new ReactComputed(callback, triggers, config);
+  return new ReactComputedManager(callback, triggers, config);
 }

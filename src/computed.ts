@@ -2,7 +2,7 @@ import type { TypeStateManagerConfigs } from "./state-manager";
 
 import { StateManager } from "./state-manager";
 
-export class Computed<DataType> extends StateManager<DataType> {
+export class ComputedManager<DataType> extends StateManager<DataType> {
   public override get value() {
     return this._clone(this._value);
   }
@@ -27,7 +27,7 @@ export class Computed<DataType> extends StateManager<DataType> {
 
   constructor(
     callback: () => DataType,
-    triggers: (StateManager<any> | Computed<any>)[],
+    triggers: (StateManager<any> | ComputedManager<any>)[],
     config: TypeStateManagerConfigs<DataType> = {
       uid: `CSM-${++counter}`,
     }
