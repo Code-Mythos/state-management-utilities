@@ -47,8 +47,8 @@ export class StoreManager<
     );
   }
 
-  public set value(value: Partial<DataType>) {
-    for (const key in value) {
+  public set value(value: DataType) {
+    for (const key in this.entities) {
       this.entities[key].value = value[key] as any;
     }
   }
@@ -63,11 +63,7 @@ export class StoreManager<
     return valueClone;
   }
 
-  public update(
-    updater:
-      | Partial<DataType>
-      | ((prev: Required<DataType>) => Partial<DataType>)
-  ) {
+  public update(updater: DataType | ((prev: Required<DataType>) => DataType)) {
     this.value = typeof updater === "function" ? updater(this.value) : updater;
 
     return this;
