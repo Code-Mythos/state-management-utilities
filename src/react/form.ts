@@ -304,19 +304,22 @@ export class ReactFormManager<
     // Error should be cleared first. The data change would trigger validation and subsequently result in new error state. If we clear it after assigning a new value, the validation would be cleared.
     this._errors.value = {
       ...this._errors.initialValues,
-      ...resetValues.errors,
+      ...(resetValues.errors ?? {}),
     };
 
-    this._data.value = { ...this._data.initialValues, ...resetValues.data };
+    this._data.value = {
+      ...this._data.initialValues,
+      ...(resetValues.data ?? {}),
+    };
 
     this._touched.value = {
       ...this._touched.initialValues,
-      ...resetValues.touched,
+      ...(resetValues.touched ?? {}),
     };
 
     this._modified.value = {
       ...this._modified.initialValues,
-      ...resetValues.modified,
+      ...(resetValues.modified ?? {}),
     };
 
     this._config.onReset?.();
