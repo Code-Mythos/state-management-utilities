@@ -3,13 +3,13 @@ import type { TypeStateManagerConfigs } from "../state-manager";
 import { produce } from "immer";
 import React from "react";
 
-import { StateManagerStore, StateManagerStoreConfigs } from "../store";
+import { StoreManager, StoreManagerConfigs } from "../store";
 import { useDehydrate } from "./dehydrate";
 import { ReactStateManager } from "./state-manager";
 
-export class ReactStateManagerStore<
+export class ReactStoreManager<
   DataType extends Record<string, any>
-> extends StateManagerStore<
+> extends StoreManager<
   DataType,
   {
     [Key in keyof Required<DataType>]: ReactStateManager<DataType[Key]>;
@@ -92,7 +92,7 @@ export class ReactStateManagerStore<
 export function store<DataType extends Record<string, any>>(
   initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
   uid?: string,
-  config?: StateManagerStoreConfigs<DataType>
-): ReactStateManagerStore<DataType> {
-  return new ReactStateManagerStore(initialValues, uid, config);
+  config?: StoreManagerConfigs<DataType>
+): ReactStoreManager<DataType> {
+  return new ReactStoreManager(initialValues, uid, config);
 }

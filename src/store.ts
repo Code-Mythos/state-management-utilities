@@ -5,7 +5,7 @@ import cloneDeep from "lodash.clonedeep";
 import { center } from "./center";
 import { StateManager } from "./state-manager";
 
-export class StateManagerStore<
+export class StoreManager<
   DataType extends Record<string, any>,
   Entities extends {
     [Key in keyof Required<DataType>]: StateManager<DataType[Key]>;
@@ -27,7 +27,7 @@ export class StateManagerStore<
   constructor(
     initialValues: { [Key in keyof Required<DataType>]: DataType[Key] },
     protected readonly _uid: string = `SMS-#${++counter}`,
-    protected readonly _config: StateManagerStoreConfigs<DataType> = {}
+    protected readonly _config: StoreManagerConfigs<DataType> = {}
   ) {
     this._initialValues = initialValues;
     this._KEYS = Object.keys(initialValues);
@@ -108,6 +108,6 @@ export class StateManagerStore<
 
 let counter = 0;
 
-export type StateManagerStoreConfigs<DataType> = {
+export type StoreManagerConfigs<DataType> = {
   [Key in keyof DataType]?: Omit<TypeStateManagerConfigs<DataType[Key]>, "uid">;
 };

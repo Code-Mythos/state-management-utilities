@@ -2,9 +2,9 @@ import React from "react";
 
 import { Hydrated } from "../center";
 import { TypeStateManagerConfigs } from "../state-manager";
-import { StateManagerStoreConfigs } from "../store";
+import { StoreManagerConfigs } from "../store";
 import { ReactStateManager } from "./state-manager";
-import { ReactStateManagerStore } from "./store";
+import { ReactStoreManager } from "./store";
 
 export class ReactFormManager<
   DataType extends Record<string, any>,
@@ -44,13 +44,13 @@ export class ReactFormManager<
     [Key in keyof Required<DataType>]: false;
   };
 
-  protected readonly _data: ReactStateManagerStore<DataType>;
+  protected readonly _data: ReactStoreManager<DataType>;
 
   public get data() {
     return this._data.entities;
   }
 
-  protected readonly _errors: ReactStateManagerStore<{
+  protected readonly _errors: ReactStoreManager<{
     [Key in keyof DataType]?: ErrorType;
   }>;
 
@@ -58,7 +58,7 @@ export class ReactFormManager<
     return this._errors.entities;
   }
 
-  protected readonly _touched: ReactStateManagerStore<{
+  protected readonly _touched: ReactStoreManager<{
     [Key in keyof DataType]?: boolean;
   }>;
 
@@ -66,7 +66,7 @@ export class ReactFormManager<
     return this._touched.entities;
   }
 
-  protected readonly _modified: ReactStateManagerStore<{
+  protected readonly _modified: ReactStoreManager<{
     [Key in keyof DataType]?: boolean;
   }>;
 
@@ -468,7 +468,7 @@ export class ReactFormManager<
       }
     );
 
-    this._data = new ReactStateManagerStore(
+    this._data = new ReactStoreManager(
       initialValues,
       `${this._config.uid}/data`,
 
@@ -484,18 +484,18 @@ export class ReactFormManager<
         };
 
         return acc;
-      }, {} as StateManagerStoreConfigs<DataType>)
+      }, {} as StoreManagerConfigs<DataType>)
     );
 
-    this._errors = new ReactStateManagerStore<{
+    this._errors = new ReactStoreManager<{
       [Key in keyof DataType]?: ErrorType;
     }>(undefinedValues, `${this._config.uid}/errors`, this._config.errors);
 
-    this._touched = new ReactStateManagerStore<{
+    this._touched = new ReactStoreManager<{
       [Key in keyof DataType]?: boolean;
     }>(undefinedValues, `${this._config.uid}/touched`, this._config.touched);
 
-    this._modified = new ReactStateManagerStore<{
+    this._modified = new ReactStoreManager<{
       [Key in keyof DataType]?: boolean;
     }>(undefinedValues, `${this._config.uid}/modified`, this._config.modified);
 
