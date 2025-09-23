@@ -105,14 +105,25 @@ export class StateManager<StateType> {
       state: newState,
     });
 
-    this._fulfill = (async () => {
-      await this._configs.onChange?.(newState);
+    // this._fulfill = (async () => {
+    //   await this._configs.onChange?.(newState);
+
+    //   for (const setterId in this._callbacks) {
+    //     /* istanbul ignore next */
+    //     await this._callbacks?.[setterId]?.(newState);
+    //   }
+    // })().catch(console.error);
+
+    try {
+      this._configs.onChange?.(newState);
 
       for (const setterId in this._callbacks) {
         /* istanbul ignore next */
-        await this._callbacks?.[setterId]?.(newState);
+        this._callbacks?.[setterId]?.(newState);
       }
-    })().catch(console.error);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
