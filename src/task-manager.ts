@@ -94,6 +94,7 @@ export class TaskManager<
 
       onRequest: async (props, instance) => {
         this.isProcessing.value = true;
+        this.error.value = null;
 
         if (center.isHydration) return;
 
