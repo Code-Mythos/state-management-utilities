@@ -413,3 +413,141 @@ console.log(
   })
 );
 ```
+
+```js
+const { value, error, modified, touched, setValue, setAsTouched } =
+  nameForm.hooks.useField("firstName");
+```
+
+## Center
+
+```js
+import { center } from "state-management-utilities";
+
+// With the enableLog setter, you can enable or disable the logging system to manage performance. Enabling logging introduces a performance overhead. The log system is enabled by default.
+center.enableLog = true;
+
+// Using the records' getter and setter, you can access the records array. Records in the logging system are stored as objects. Each record object includes updatedUID, states, timestamp, and number. The number field indicates the order of changes. updatedUID stores the UID of the last manager whose value changed. timestamp indicates when the last change occurred. states includes the state of all state managers at that moment.
+const records = center.records;
+
+// The apply method sets state-manager values from a record. With the apply and records methods, you can implement a time-traveling debugging feature. The state management utilities package also enables importing and exporting records, which supports remote debugging. Records can be exported to a file or sent as data to a remote server for further analysis.
+if (records[0]) center.apply(records[0]);
+
+// The onLog method accepts a callback that executes whenever a log event occurs, that is, when a state manager's state changes. This callback receives an object that includes the UID and the state of the recently changed state manager. For performance reasons, only one callback can be registered.
+center.onLog(({ uid, state }) => {
+  console.log(`log: ${uid}`);
+});
+
+// Get current state
+console.log(`current state: `, center.currentStates);
+
+// The disableCloning method enables or disables deep cloning for all state managers. By default, each state-manager uses the deep-clone method from lodash package to return a value. If the state manager's value is large, creating a deep clone can degrade system performance. If you are sure the data won't change while in use, disable cloning to improve performance; otherwise keep cloning enabled to avoid accidental mutations.
+center.disableCloning = false;
+
+// Hydrated
+{hydrated, values} = center.hydrated.generate(...)
+
+// Hydrated with initial values
+{hydrated, values} = center.hydrated.config({initial}).generate(...)
+```
+
+```js
+// Example of hydration with initial value
+
+import { Job } from "@/components/pages/Job";
+import { getJob } from "@/interfaces/backend/jobs/getJob";
+import { jobForm } from "@/interfaces/frontend/jobForm";
+import { center } from "state-management-utilities";
+
+export default Job;
+
+export async function getServerSideProps({ params }) {
+  const idString = params?.id;
+
+  if (!idString)
+    return {
+      notFound: true,
+    };
+
+  const {
+    hydrated: initial,
+    values: [{ data }],
+  } = await center.hydrated.generate(
+    getJob.hydrate({ id: parseInt(idString) })
+  );
+
+  const { hydrated } = await center.hydrated
+    .config({ initial })
+    .generate(jobForm.hydrate({ data }));
+
+  return {
+    props: { hydrated },
+  };
+}
+```
+
+```js
+// Example of hydration without initial value
+
+import { Home } from "@/components/pages/Home";
+import { getWarnedJobs } from "@/interfaces/backend/jobs/getWarnedJobs";
+import { center } from "state-management-utilities";
+
+export default Home;
+
+export async function getServerSideProps() {
+  const { hydrated } = await center.hydrated.generate(getWarnedJobs.hydrate());
+
+  return {
+    props: { hydrated },
+  };
+}
+```
+
+### Dehydrate within Next JS
+
+The dehydrate method receives the hydrated object and updates the state-managers' values.
+It dehydrates the hydrated states by updating state-managers' values.
+The dehydrate logic is implemented by default in DehydrateStateManager component.
+This component receives pageProps and update state managers based on the hydrated state it receives.
+
+```js
+export default function App({ Component, pageProps }) {
+  return (
+    <>
+      <Head>
+        <title>Next App</title>
+        <meta name="description" content="Next APP" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <DehydrateStateManager pageProps={pageProps}>
+        <Component {...pageProps} />
+      </DehydrateStateManager>
+    </>
+  );
+}
+```
+
+## React Dev Tool
+
+It is a monitoring and debugging tool for application state.
+It has the time-traveling capability.
+It also supports remote debugging by exporting or importing records to or from a file; or, by sending or receiving them with a remote server endpoint.
+The react-dev-tool accepts styles prop provided with the state-management-utilities package.
+However, you can pass your own styles to customize its appearance based on your needs.
+It also accepts an enable prop that allows you to enable or disable the react-dev-tool as needed.
+
+```js
+import { ReactDevTool } from "state-management-utilities";
+import devToolStyles from "state-management-utilities/RSMDT.module.css";
+
+export default function App() {
+  return (
+    <>
+      <ReactDevTool styles={devToolStyles} />
+    </>
+  );
+}
+```
