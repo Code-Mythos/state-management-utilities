@@ -421,6 +421,8 @@ const { value, error, modified, touched, setValue, setAsTouched } =
 
 ## Center
 
+It is the logging, monitoring, and management unit for the state managers.
+
 ```js
 import { center } from "state-management-utilities";
 
